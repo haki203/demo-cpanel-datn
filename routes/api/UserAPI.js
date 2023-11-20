@@ -20,7 +20,7 @@ router.get('/login-google/:email', async (req, res) => {
         }
         res.status(200).json({ result: true, user: user });
     } catch (error) {
-        res.status(500).json({ result: false, message: 'Internal Server Error' + error });
+        res.status(201).json({ result: false, message: 'Internal Server Error' + error });
     }
 });
 router.post('/login', async (req, res, next) => {
@@ -34,11 +34,11 @@ router.post('/login', async (req, res, next) => {
             return res.status(200).json({ result: true, user: user, token: token });
         }
         else {
-            return res.status(444).json({ result: false, message: "Email doesn't exist" });
+            return res.status(201).json({ result: false, message: "Email doesn't exist" });
         }
     } catch (error) {
         console.log(error);
-        res.status(400).json({ result: false });
+        res.status(201).json({ result: false });
     }
 });
 router.post('/update-user', async (req, res, next) => {
@@ -54,15 +54,15 @@ router.post('/update-user', async (req, res, next) => {
                 return res.status(200).json({ result: true, user: user, });
             }
             else {
-                return res.status(445).json({ result: false, message: "ko cap nhat duoc user" });
+                return res.status(201).json({ result: false, message: "ko cap nhat duoc user" });
             }
         } catch (error) {
-            return res.status(445).json({ result: false, message: error });
+            return res.status(201).json({ result: false, message: error });
         }
 
     } catch (error) {
         console.log(error);
-        res.status(400).json({ result: false, message: error });
+        res.status(201).json({ result: false, message: error });
     }
 });
 router.get('/logout', async (req, res, next) => {
@@ -78,7 +78,7 @@ router.get('/logout', async (req, res, next) => {
 
     } catch (error) {
         console.log(error);
-        res.status(400).json({ result: false });
+        res.status(201).json({ result: false });
     }
 });
 //api register
@@ -98,12 +98,12 @@ router.post('/register', [validation.checkRegister], async (req, res, next) => {
             return res.status(200).json({ result: true, data });
         }
         else {
-            return res.status(401).json({ result: false, data });
+            return res.status(201).json({ result: false, data });
         }
     } catch (error) {
         console.log(error);
         //next error; Chi chay web
-        return res.status(4000).json({ result: false });
+        return res.status(201).json({ result: false });
     }
 });
 router.post('/changepass/', async (req, res, next) => {
@@ -118,7 +118,7 @@ router.post('/changepass/', async (req, res, next) => {
             kq,
         }
         if (kq == null) {
-            return res.status(409).json({ result: false, messenger: "doi mat khau ko thanh cong" });
+            return res.status(201).json({ result: false, messenger: "doi mat khau ko thanh cong" });
         }
         else {
             return res.status(200).json({ result: true, data, messenger: "doi mat khau thanh cong" });
@@ -129,7 +129,7 @@ router.post('/changepass/', async (req, res, next) => {
     } catch (error) {
         console.log(error);
         //next error; Chi chay web
-        return res.status(400).json({ result: false, messenger: "Ko doi duoc mat khau" });
+        return res.status(201).json({ result: false, messenger: "Ko doi duoc mat khau" });
     }
 });
 router.get('/findUser/:id', async (req, res, next) => {
@@ -145,7 +145,7 @@ router.get('/findUser/:id', async (req, res, next) => {
     } catch (error) {
         console.log(error);
         //next error; Chi chay web
-        return res.status(400).json({ result: false });
+        return res.status(201).json({ result: false });
     }
 });
 

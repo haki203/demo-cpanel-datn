@@ -16,7 +16,7 @@ router.get('/', async (req, res, next) => {
         const product = await productController.getAllProducts();
         res.status(200).json({ product, result: true });
     } catch (error) {
-        res.status(400).json({});
+        res.status(201).json({});
     }
 });
 router.get('/:id', async (req, res, next) => {
@@ -25,7 +25,7 @@ router.get('/:id', async (req, res, next) => {
         const product = await productController.getProductById(id);
         res.status(200).json({ product, result: true });
     } catch (error) {
-        res.status(400).json({});
+        res.status(201).json({});
     }
 });
 // get author by id
@@ -36,7 +36,7 @@ router.get('/author/:id', async (req, res, next) => {
         const author = await authorModel.findById(id);
         res.status(200).json({ author, result: true });
     } catch (error) {
-        res.status(400).json({ result: false, error });
+        res.status(201).json({ result: false, error });
     }
 });
 //add favourite
@@ -44,7 +44,7 @@ router.post('/favourite/new', async (req, res, next) => {
     const { idUser, idBook } = req.body;
     try {
         if (!idUser || !idBook) {
-            return res.status(400).json({ result: false, message: "Thieu thong tin" });
+            return res.status(201).json({ result: false, message: "Thieu thong tin" });
         }
         else {
             const allFavourites = await favouriteModel.find({});
@@ -62,18 +62,18 @@ router.post('/favourite/new', async (req, res, next) => {
             if (favourite) {
                 return res.status(200).json({ result: true, message: "yeu thich thanh cong" });
             } else {
-                return res.status(400).json({ result: false });
+                return res.status(201).json({ result: false });
             }
         }
     } catch (error) {
-        return res.status(400).json({ result: false, error });
+        return res.status(201).json({ result: false, error });
     }
 });
 router.get('/favourite/delete/:id', async (req, res, next) => {
     const { id } = req.params;
     try {
         if (!id) {
-            return res.status(400).json({ result: false, message: "Thieu thong tin" });
+            return res.status(201).json({ result: false, message: "Thieu thong tin" });
         }
         else {
             const favourite = await favouriteModel.findByIdAndDelete(id);
@@ -81,11 +81,11 @@ router.get('/favourite/delete/:id', async (req, res, next) => {
             if (favourite) {
                 return res.status(200).json({ result: true, message: "xoa thanh cong" });
             } else {
-                return res.status(400).json({ result: false, message: "ko tim thay id" });
+                return res.status(201).json({ result: false, message: "ko tim thay id" });
             }
         }
     } catch (error) {
-        return res.status(400).json({ result: false, error });
+        return res.status(201).json({ result: false, error });
     }
 });
 // get all favourite by id user
@@ -93,7 +93,7 @@ router.get('/favourite/get-book-by-user/:idUser', async (req, res, next) => {
     const { idUser } = req.params;
     try {
         if (!idUser) {
-            return res.status(400).json({ result: false, message: "Thieu thong tin" });
+            return res.status(201).json({ result: false, message: "Thieu thong tin" });
         }
         else {
             const userFavourites = await favouriteModel.find({ userId: idUser });
@@ -110,7 +110,7 @@ router.get('/favourite/get-book-by-user/:idUser', async (req, res, next) => {
             }
         }
     } catch (error) {
-        return res.status(400).json({ result: false, message: error + idUser });
+        return res.status(201).json({ result: false, message: error + idUser });
     }
 });
 // get category
@@ -119,7 +119,7 @@ router.get('/category/getAlls', async (req, res, next) => {
         const category = await categoryModel.find({})
         res.status(200).json({ category, result: true });
     } catch (error) {
-        res.status(400).json({});
+        res.status(201).json({});
     }
 });
 // get category by id
@@ -129,7 +129,25 @@ router.get('/category/:id', async (req, res, next) => {
         const category = await categoryModel.findById(id);
         res.status(200).json({ category, result: true });
     } catch (error) {
-        res.status(400).json({});
+        res.status(201).json({});
+    }
+});
+// get category by id
+router.post('/pdf/update', async (req, res, next) => {
+    const { id, newPdf } = req.body;
+    try {
+        if (!id || !newPdf) {
+            res.status(201).json({result: false,message:'thieu thong tin' });
+        } else {
+            const pdf = await productModel.findByIdAndUpdate(id,{pdf:newPdf});
+            if(pdf){
+                res.status(200).json({ pdf, result: true });
+            }else{
+                res.status(201).json({result: false,pdf });
+            }
+        }
+    } catch (error) {
+        res.status(201).json({result:false,message:""+error});
     }
 });
 // get all product by category
@@ -142,10 +160,10 @@ router.get('/get-by-category/:categoryId', async (req, res) => {
             res.status(200).json({ result: true, product });
         }
         else {
-            res.status(400).json({ result: false });
+            res.status(201).json({ result: false });
         }
     } catch (err) {
-        res.status(500).json({ error: 'Đã có lỗi xảy ra' });
+        res.status(201).json({ error: 'Đã có lỗi xảy ra' });
     }
 });
 router.post('/comment/new', async (req, res) => {
@@ -154,7 +172,7 @@ router.post('/comment/new', async (req, res) => {
         const time = moment().format('hh:mm A');
         const date = moment().format('DD/MM/YYYY');
         if (!userId || !bookId || !title || !content || !rate) {
-            res.status(444).json({ result: false, message: "Thiếu thông tin" });
+            res.status(201).json({ result: false, message: "Thiếu thông tin" });
         } else {
             const newCmt = {
                 time: time,
@@ -171,7 +189,7 @@ router.post('/comment/new', async (req, res) => {
                 res.status(200).json({ result: true, comment });
             }
             else {
-                res.status(400).json({ result: false });
+                res.status(201).json({ result: false });
             }
         }
     } catch (err) {
@@ -206,12 +224,12 @@ router.get('/comment/get-by-id/:bookId', async (req, res, next) => {
             }
             return res.status(200).json({ comments, result: true });
         } else {
-            res.status(400).json({ result: false });
+            res.status(201).json({ result: false });
         }
 
     } catch (error) {
         console.log("api search error: " + error);
-        res.status(400).json({ result: false });
+        res.status(201).json({ result: false });
     }
 });
 // add sp
@@ -222,7 +240,7 @@ router.post('/', async (req, res, next) => {
         await productController.addNewProduct(name, price, quantity, image, category);
         res.status(200).json({ result: true });
     } catch (error) {
-        res.status(400).json({ result: false });
+        res.status(201).json({ result: false });
     }
 });
 //api/product/search/name?keyword=iphone
@@ -234,7 +252,7 @@ router.get('/search/name', async (req, res, next) => {
         return res.status(200).json({ product, result: true });
     } catch (error) {
         console.log("api search error: " + error);
-        res.status(400).json({ result: false });
+        res.status(201).json({ result: false });
     }
 });
 router.get('/search/recent', async (req, res, next) => {
@@ -247,27 +265,27 @@ router.get('/search/recent', async (req, res, next) => {
         return res.status(200).json({ top5Products, result: true });
     } catch (error) {
         console.log("api search error: " + error);
-        res.status(400).json({ result: false });
+        res.status(201).json({ result: false });
     }
 });
 router.get('/search/select/:id', async (req, res, next) => {
-    const {id} = req.params;
+    const { id } = req.params;
     try {
         const now = new Date();
         const updatedProduct = await productModel.findByIdAndUpdate(
             id,
             {
-              $inc: { search: 1 }, // Cộng thêm 1 cho trường search
-              last_search: now,     // Cập nhật trường last_search thành thời gian hiện tại
+                $inc: { search: 1 }, // Cộng thêm 1 cho trường search
+                last_search: now,     // Cập nhật trường last_search thành thời gian hiện tại
             },
             { new: false } // Tùy chọn này để nhận lại sản phẩm đã được cập nhật
-          );
+        );
 
         // Lấy ra 5 sản phẩm đầu tiên
-        return res.status(200).json({result: true });
+        return res.status(200).json({ result: true });
     } catch (error) {
         console.log("api search error: " + error);
-        res.status(400).json({ result: false });
+        res.status(201).json({ result: false });
     }
 });
 router.get('/add/new', async (req, res, next) => {
@@ -289,7 +307,7 @@ router.get('/add/new', async (req, res, next) => {
             updateResult
         });
     } catch (error) {
-        res.status(400).json({ result: false, message: 'Lỗi khi cập nhật cột mới.' });
+        res.status(201).json({ result: false, message: 'Lỗi khi cập nhật cột mới.' });
     }
 });
 router.get('/relate/:id', async (req, res, next) => {
@@ -300,17 +318,17 @@ router.get('/relate/:id', async (req, res, next) => {
         return res.status(200).json({ product, result: true });
     } catch (error) {
         console.log("api search error: " + error);
-        res.status(400).json({ result: false });
+        res.status(201).json({ result: false });
     }
 });
 router.post('/public/year', async (req, res, next) => {
-    const {id,date} = req.body;
+    const { id, date } = req.body;
     try {
-        const product = await productModel.findByIdAndUpdate(id,{publicAt:date})
+        const product = await productModel.findByIdAndUpdate(id, { publicAt: date })
         return res.status(200).json({ product, result: true });
     } catch (error) {
         console.log("api search error: " + error);
-        res.status(400).json({ result: false });
+        res.status(201).json({ result: false });
     }
 });
 //upload hinh len sever
@@ -319,7 +337,7 @@ router.post('/upload', [UploadFile.single('image')], async (req, res, next) => {
     try {
         const { file } = req;
         if (!file) {
-            return res.status(400).json({ result: false });
+            return res.status(201).json({ result: false });
         }
         else {
             const url = `http://172.16.87.39:3000/images/${file.filename}`;
@@ -327,7 +345,7 @@ router.post('/upload', [UploadFile.single('image')], async (req, res, next) => {
         }
     } catch (error) {
         console.log("upload error: " + error);
-        res.status(500).json({});
+        res.status(201).json({});
     }
 });
 //api/product/get-all-products
@@ -335,7 +353,7 @@ router.get('/get-all-products', [UploadFile.single('image')], async (req, res, n
     try {
         const { file } = req;
         if (!file) {
-            return res.status(400).json({ result: false });
+            return res.status(201).json({ result: false });
         }
         else {
             const url = `http://172.16.87.39:3000/images/${file.filename}`;
@@ -343,7 +361,7 @@ router.get('/get-all-products', [UploadFile.single('image')], async (req, res, n
         }
     } catch (error) {
         console.log("upload error: " + error);
-        res.status(500).json({});
+        res.status(201).json({});
     }
 });
 module.exports = router;
