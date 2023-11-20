@@ -139,8 +139,9 @@ router.post('/pdf/update', async (req, res, next) => {
         if (!id || !newPdf) {
             res.status(201).json({result: false,message:'thieu thong tin' });
         } else {
-            const pdf = await productModel.findByIdAndUpdate(id,{pdf:newPdf});
-            if(pdf){
+            const pdfd = await productModel.findByIdAndUpdate(id,{pdf:newPdf});
+            if(pdfd){
+                const pdf = await productModel.findById(id);
                 res.status(200).json({ pdf, result: true });
             }else{
                 res.status(201).json({result: false,pdf });
