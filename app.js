@@ -4,7 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const session = require('express-session');
-const mongoose =require('mongoose');
+const mongoose = require('mongoose');
 require('./components/products/ProductModel');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -12,7 +12,8 @@ const productApiRouter = require('./routes/api/ProductAPI');
 const userApiRouter = require('./routes/api/UserAPI');
 const productCpanelRouter = require('./routes/cpanel/ProductCPanel');
 const userCpanelRouter = require('./routes/cpanel/UserCpanel');
-
+const cors = require('cors');
+const app = express();
 const firebaseConfig = {
   apiKey: "AIzaSyAyhWnSyHSvXHnKEGzUemayimWlpLQfo7I",
   authDomain: "bookapp-f06b4.firebaseapp.com",
@@ -21,7 +22,6 @@ const firebaseConfig = {
   messagingSenderId: "739672106128",
   appId: "1:739672106128:web:5186d4b6889378d25aa415"
 };
-var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -47,7 +47,7 @@ mongoose.connect('mongodb+srv://xuong:844666@cluster0.0urhouz.mongodb.net/datn',
 
   .then(() => console.log('>>>>>>>>>> DB Connected!!!!!!'))
   .catch(err => console.log('>>>>>>>>> DB Error: ', err));
-
+app.use(cors());
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/api/user', userApiRouter);
@@ -55,12 +55,12 @@ app.use('/api/product', productApiRouter);
 app.use('/cpanel/user', userCpanelRouter);
 app.use('/cpanel/product', productCpanelRouter);
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

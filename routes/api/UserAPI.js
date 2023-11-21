@@ -4,7 +4,8 @@ const userController = require('../../components/users/UserController');
 const validation = require('../../middle/Validation');
 const jwt = require('jsonwebtoken');
 const userModel = require('../../components/users/UserModel');
-
+const cors = require('cors');
+const app = express();
 const { authenApp } = require('../../middle/Authen');
 const AdminModel = require('../../components/users/AdminModel');
 const { log } = require('debug/src/browser');
@@ -61,21 +62,6 @@ router.post('/login/cpanel', async (req, res, next) => {
             }else{
                 res.status(201).json({ status: true, message: 'Login failer' });
             }
-            // if (user) {
-            //     // tao token
-            //     if (password == user.password) {
-            //         // Password is valid, login successful
-            //         res.status(200).json({ status: true, message: 'Login successful', user });
-            //     } else {
-            //         // Password is invalid
-            //         res.status(201).json({ status: false, message: 'Invalid password' });
-            //     }
-            //     const token = jwt.sign({ user }, 'secret', { expiresIn: '1h' });
-            //     return res.status(200).json({ result: true, user: user, token: token });
-            // }
-            // else {
-            //     return res.status(201).json({ result: false, message: "User not found" });
-            // }
         }
     } catch (error) {
         console.log(error);
