@@ -6,6 +6,8 @@ const jwt = require('jsonwebtoken');
 const userModel = require('../../components/users/UserModel');
 
 const { authenApp } = require('../../middle/Authen');
+const AdminModel = require('../../components/users/AdminModel');
+const { log } = require('debug/src/browser');
 //api login
 // r
 // Kiểm tra email và trả về user hoặc tạo mới user
@@ -35,6 +37,45 @@ router.post('/login', async (req, res, next) => {
         }
         else {
             return res.status(201).json({ result: false, message: "Email doesn't exist" });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(201).json({ result: false });
+    }
+});
+//login cpanel
+router.post('/login/cpanel', async (req, res, next) => {
+    try {
+        const { email, password } = req.body;
+
+        if (!email || !password) {
+            return res.status(201).json({ result: false, message: "Thieu thong tin" });
+        }
+        else {
+            const user = await AdminModel.findOne({ email });
+            console.log(user);
+            console.log("pass ne: ",password);
+            console.log("pass ne: ",user.password);
+            if(password==user.password){
+                res.status(200).json({ status: true, message: 'Login successful', user });
+            }else{
+                res.status(201).json({ status: true, message: 'Login failer' });
+            }
+            // if (user) {
+            //     // tao token
+            //     if (password == user.password) {
+            //         // Password is valid, login successful
+            //         res.status(200).json({ status: true, message: 'Login successful', user });
+            //     } else {
+            //         // Password is invalid
+            //         res.status(201).json({ status: false, message: 'Invalid password' });
+            //     }
+            //     const token = jwt.sign({ user }, 'secret', { expiresIn: '1h' });
+            //     return res.status(200).json({ result: true, user: user, token: token });
+            // }
+            // else {
+            //     return res.status(201).json({ result: false, message: "User not found" });
+            // }
         }
     } catch (error) {
         console.log(error);
