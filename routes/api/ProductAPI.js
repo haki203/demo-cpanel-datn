@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const moment = require('moment-timezone');
+const moment = require('moment');
 const mongoose = require('mongoose');
 const productModel = require('../../components/products/ProductModel');
 const authorModel = require('../../components/products/AuthorModel');
@@ -170,12 +170,8 @@ router.get('/get-by-category/:categoryId', async (req, res) => {
 router.post('/comment/new', async (req, res) => {
     try {
         const { userId, bookId, title, content, rate } = req.body;
-        moment.tz.setDefault('Asia/Ho_Chi_Minh');
-const currentTimeZone = moment.tz.guess();
-
-console.log('Current Time Zone:', currentTimeZone);
-        const time = moment().format('hh:mm A');
-        const date = moment().format('DD/MM/YYYY');
+        const time = moment().add(7, 'hours').format('hh:mm A');
+        const date = moment().add(7, 'hours').format('DD/MM/YYYY');
 
         if (!userId || !bookId || !title || !content || !rate) {
             res.status(201).json({ result: false, message: "Thiếu thông tin" });
