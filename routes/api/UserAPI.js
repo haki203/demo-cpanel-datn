@@ -29,12 +29,13 @@ router.get('/login-google/:email', async (req, res) => {
 router.post('/login', async (req, res, next) => {
     try {
         const { email } = req.body;
-        const user = await userController.login(email);
+        const user = await userModel.findOne({email})
+        console.log(email);
         console.log(user);
         if (user) {
             // tao token
             const token = jwt.sign({ user }, 'secret', { expiresIn: '1h' });
-            return res.status(200).json({ result: true, user: user, token: token });
+            return res.status(200).json({ result: true, user: user, token: token ,status: true, message: 'Login successful',});
         }
         else {
             return res.status(201).json({ result: false, message: "Email doesn't exist" });
