@@ -47,7 +47,7 @@
         <div class="d-flex align-items-center justify-content-between">
             <a href="/" class="logo d-flex align-items-center">
                 <img src="/assets/img/logo_icon.png" alt="">
-                <span class="d-none d-lg-block">xuong</span>
+                <span class="d-none d-lg-block">authens</span>
             </a>
             <i class="bi bi-list toggle-sidebar-btn"></i>
         </div><!-- End Logo -->
@@ -211,7 +211,7 @@
             <li class="nav-item">
                 <a href="/cpanel/product" class="nav-link collapsed" href="pages-contact.html">
                     <i class="bi bi-book"></i>
-                    <span>Reports</span>
+                    <span>Books</span>
                 </a>
             </li><!-- End Contact Page Nav -->
 
@@ -232,7 +232,7 @@
             <div class="col-lg-11">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Danh sách Reports</h5>
+                        <h5 class="card-title">Danh sách Books</h5>
                         <!-- Default Table -->
                         <table class="table">
                             <style>
@@ -266,27 +266,23 @@
                             </style>
                             <thead>
                                 <tr>
-                                    <th scope="col">Image</th>
-                                    <th scope="col">Room</th>
-                                    <th scope="col">Report Date</th>
-                                    <th scope="col">User</th>
-                                    <th scope="col">Type</th>
-                                    <th scope="col">Admin</th>
-                                    <th scope="col">Description</th>
-                                    <th scope="col">Trạng thái</th>
+                                    <th scope="col">Hình ảnh</th>
+                                    <th scope="col">Tên sách</th>
+                                    <th scope="col">Năm xuất bản</th>
+                                    <th scope="col">Giới thiệu</th>
                                 </tr>
                             </thead>
 
                             <tbody>
-                                {{#each reports}}
+                                {{#each products}}
                                 <tr>
                                     <td>
                                         <img style="width:150px; height: 180px;" src="{{this.image}}">
                                     </td>
-                                    <td>{{this.room}}</td>
-                                    <td>{{this.report_date}}</td>
-                                    <td>{{this.userId.full_name}}</td>
-                                    <td class="types">{{this.type}}</td>
+                                    <td>{{this.title}}</td>
+                                    <td>{{this.publicAt}}</td>
+                                    <td>{{this.description}}</td>
+                                    {{!-- <td class="types">{{this.type}}</td>
 
                                     <td>
                                         {{#if this.admin.full_name}}
@@ -297,7 +293,7 @@
                                     </td>
 
                                     <td class="limited-lines">{{this.description}}</td>
-                                    <td class="status">{{this.status}}</td>
+                                    <td class="status">{{this.status}}</td> --}}
                                 </tr>
                                 {{/each}}
                             </tbody>

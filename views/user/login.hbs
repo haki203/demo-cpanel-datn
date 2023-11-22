@@ -16,14 +16,7 @@
 <link
     href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
     rel="stylesheet">
-<!-- Font Awesome -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
-<!-- MDB -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.css" rel="stylesheet" />
-<!-- MDB -->
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.2/mdb.min.js"></script>
+
 <!-- Vendor CSS Files -->
 <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
@@ -35,45 +28,69 @@
 
 <!-- Template Main CSS File -->
 <link href="assets/css/style.css" rel="stylesheet">
+<script>
+    // Kiểm tra nếu có thông báo lỗi trong URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+
+    // Hiển thị thông báo nếu có lỗi
+    if (error === 'invalid') {
+        alert('Sai tên đăng nhập hoặc mật khẩu');
+    }
+</script>
 
 <body>
     <main>
         <div class="container">
-            <section class="vh-100" style="background-color: #508bfc;">
-                <div class="container py-5 h-100">
-                    <div class="row d-flex justify-content-center align-items-center h-100">
-                        <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-                            <div class="card shadow-2-strong" style="border-radius: 1rem;">
-                                <div class="card-body p-5 text-center">
 
-                                    <h3 class="mb-5">Sign in</h3>
-
-                                    <div class="form-outline mb-4">
-                                        <input type="email" id="typeEmailX-2" class="form-control form-control-lg" />
-                                        <label class="form-label" for="typeEmailX-2">Email</label>
+            <section
+                class="section register min-vh-100 d-flex flex-column align-items-center justify-content-center py-4">
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center justify-content-center">
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <div class="pt-4 pb-2">
+                                        <h5 class="card-title text-center pb-0 fs-4">Login to Your Account</h5>
+                                        <p class="text-center small">Enter your username & password to login</p>
                                     </div>
 
-                                    <div class="form-outline mb-4">
-                                        <input type="password" id="typePasswordX-2"
-                                            class="form-control form-control-lg" />
-                                        <label class="form-label" for="typePasswordX-2">Password</label>
-                                    </div>
 
-                                    <!-- Checkbox -->
-                                    <div class="form-check d-flex justify-content-start mb-4">
-                                        <input class="form-check-input" type="checkbox" value="" id="form1Example3" />
-                                        <label class="form-check-label" for="form1Example3"> Remember password </label>
-                                    </div>
+                                    <form class="row g-3 needs-validation" novalidate method="post" action="/login ">
+                                        <div class="col-12">
+                                            <label for="yourUsername" class="form-label">Email</label>
+                                            <div class="input-group has-validation">
+                                                <input type="text" name="email" class="form-control" id="yourUsername"
+                                                    required>
+                                                <div class="invalid-feedback">Please enter your email.</div>
+                                            </div>
+                                            <label for="yourUsername" class="form-label">Password</label>
+                                            <div class="input-group has-validation">
+                                                <input type="password" name="password" class="form-control"
+                                                    id="yourUsername" required>
+                                                <div class="invalid-feedback">Please enter your password.</div>
+                                            </div>
+                                        </div>
+                                        {{!-- <div class="col-12">
+                                            <label for="yourPassword" class="form-label">Password</label>
+                                            <input type="password" name="password" class="form-control"
+                                                id="yourPassword" required>
+                                            <div class="invalid-feedback">Please enter your password!</div>
+                                        </div>
 
-                                    <button class="btn btn-primary btn-lg btn-block" type="submit">Login</button>
+                                        <div class="col-12">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" name="remember"
+                                                    value="true" id="rememberMe">
+                                                <label class="form-check-label" for="rememberMe">Remember me</label>
+                                            </div>
+                                        </div> --}}
+                                        <div class="col-12">
+                                            <button class="btn btn-primary w-100" type="submit">Login
+                                            </button>
+                                        </div>
 
-                                    <hr class="my-4">
-
-                                    <button class="btn btn-lg btn-block btn-primary" style="background-color: #dd4b39;"
-                                        type="submit"><i class="fab fa-google me-2"></i> Sign in with google</button>
-                                    <button class="btn btn-lg btn-block btn-primary mb-2"
-                                        style="background-color: #3b5998;" type="submit"><i
-                                            class="fab fa-facebook-f me-2"></i>Sign in with facebook</button>
+                                    </form>
 
                                 </div>
                             </div>

@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const moment = require('moment'); // Import thư viện moment
+const moment = require('moment-timezone');
 const mongoose = require('mongoose');
 const productModel = require('../../components/products/ProductModel');
 const authorModel = require('../../components/products/AuthorModel');
@@ -137,18 +137,18 @@ router.post('/pdf/update', async (req, res, next) => {
     const { id, newPdf } = req.body;
     try {
         if (!id || !newPdf) {
-            res.status(201).json({result: false,message:'thieu thong tin' });
+            res.status(201).json({ result: false, message: 'thieu thong tin' });
         } else {
-            const pdfd = await productModel.findByIdAndUpdate(id,{pdf:newPdf});
-            if(pdfd){
+            const pdfd = await productModel.findByIdAndUpdate(id, { pdf: newPdf });
+            if (pdfd) {
                 const pdf = await productModel.findById(id);
                 res.status(200).json({ pdf, result: true });
-            }else{
-                res.status(201).json({result: false,pdf });
+            } else {
+                res.status(201).json({ result: false, pdf });
             }
         }
     } catch (error) {
-        res.status(201).json({result:false,message:""+error});
+        res.status(201).json({ result: false, message: "" + error });
     }
 });
 // get all product by category
@@ -170,8 +170,13 @@ router.get('/get-by-category/:categoryId', async (req, res) => {
 router.post('/comment/new', async (req, res) => {
     try {
         const { userId, bookId, title, content, rate } = req.body;
+        moment.tz.setDefault('Asia/Ho_Chi_Minh');
+const currentTimeZone = moment.tz.guess();
+
+console.log('Current Time Zone:', currentTimeZone);
         const time = moment().format('hh:mm A');
         const date = moment().format('DD/MM/YYYY');
+
         if (!userId || !bookId || !title || !content || !rate) {
             res.status(201).json({ result: false, message: "Thiếu thông tin" });
         } else {

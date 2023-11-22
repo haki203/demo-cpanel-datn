@@ -55,11 +55,13 @@ router.post('/login/cpanel', async (req, res, next) => {
         else {
             const user = await AdminModel.findOne({ email });
             console.log(user);
-            console.log("pass ne: ",password);
-            console.log("pass ne: ",user.password);
-            if(password==user.password){
-                res.status(200).json({ status: true, message: 'Login successful', user });
-            }else{
+            console.log("pass ne: ", password);
+            console.log("pass ne: ", user.password);
+
+            if (password == user.password) {
+                const token = jwt.sign({ user }, 'secret', { expiresIn: '1h' });
+                 res.status(200).json({ result: true, user: user, token: token });
+            } else {
                 res.status(201).json({ status: true, message: 'Login failer' });
             }
         }

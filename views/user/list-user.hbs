@@ -237,21 +237,19 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th scope="col">ID</th>
-                                    <th scope="col">Name</th>
+                                    <th scope="col">Avatar</th>
+                                    <th scope="col">Tên</th>
                                     <th scope="col">Email</th>
-                                    <th scope="col">Phone</th>
-                                    <th scope="col">Role</th>
+                                    <th scope="col">SDT</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {{#each users}}
-                                <tr>
-                                    <td>{{this._id}}</td>
-                                    <td>{{this.full_name}}</td>
+                                <tr style="vertical-align: middle;">
+                                    <td><img style="width: 200px;height: 190px;border-radius: 10%;" src={{this.avatar}} alt="User Avatar"></td>
+                                    <td style="font-weight: bold;">{{this.full_name}}</td>
                                     <td>{{this.email}}</td>
                                     <td>{{this.phone}}</td>
-                                    <td>{{this.role}}</td>
                                 </tr>
                                 {{/each}}
                             </tbody>

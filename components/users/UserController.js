@@ -19,8 +19,8 @@ const getAllUsers = async ()=>{
         throw error;
     }
 }
-const login = async (email)=>{
-    return await userService.login(email);
+const login = async (email,password)=>{
+    return await userService.login(email,password);
 }
 const register = async (email,password,name)=>{
     try {

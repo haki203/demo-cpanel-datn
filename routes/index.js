@@ -26,8 +26,8 @@ router.get('/tables', [auth.authenweb], function (req, res, next) {
 router.post('/login', [auth.authenweb], async function (req, res, next) {
   // ktra xu ly login
   // neu thanh cong => trang chu
-  const { email } = req.body;
-  const result = await userController.login(email);
+  const { email,password } = req.body;
+  const result = await userController.login(email,password);
   //luu tt vao token
   console.log("result (index login):",result);
   if (result) {
@@ -36,7 +36,7 @@ router.post('/login', [auth.authenweb], async function (req, res, next) {
     return res.redirect('/');
   }
   else {
-    return res.redirect('/login');
+    return res.redirect('/login?error=invalid');
   }
 });
 router.get("/logout", [auth.authenweb], function (req, res, next) {
