@@ -39,12 +39,29 @@ router.get('/author/:id', async (req, res, next) => {
         res.status(201).json({ result: false, error });
     }
 });
+// get book by id authior
+router.get('/get-book-by-author/:id', async (req, res, next) => {
+    const { id } = req.params;
+    let ids =new  mongoose.Types.ObjectId(id);
+    console.log(ids);
+    try {
+
+        const products = await productModel.find({ authorId: ids });
+        if (products) {
+            res.status(200).json({ products, result: true });
+        } else {
+            res.status(200).json({ result: false });
+        }
+    } catch (error) {
+        res.status(200).json({ result: false, error });
+    }
+});
 //add favourite
 router.post('/favourite/new', async (req, res, next) => {
     const { idUser, idBook } = req.body;
     try {
         if (!idUser || !idBook) {
-            return res.status(201).json({ result: false, message: "Thieu thong tin" });
+            return res.status(200).json({ result: false, message: "Thieu thong tin" });
         }
         else {
             const allFavourites = await favouriteModel.find({});
@@ -66,14 +83,14 @@ router.post('/favourite/new', async (req, res, next) => {
             }
         }
     } catch (error) {
-        return res.status(201).json({ result: false, error });
+        return res.status(200).json({ result: false, error });
     }
 });
 router.get('/favourite/delete/:id', async (req, res, next) => {
     const { id } = req.params;
     try {
         if (!id) {
-            return res.status(201).json({ result: false, message: "Thieu thong tin" });
+            return res.status(200).json({ result: false, message: "Thieu thong tin" });
         }
         else {
             const favourite = await favouriteModel.findByIdAndDelete(id);
@@ -81,11 +98,11 @@ router.get('/favourite/delete/:id', async (req, res, next) => {
             if (favourite) {
                 return res.status(200).json({ result: true, message: "xoa thanh cong" });
             } else {
-                return res.status(201).json({ result: false, message: "ko tim thay id" });
+                return res.status(200).json({ result: false, message: "ko tim thay id" });
             }
         }
     } catch (error) {
-        return res.status(201).json({ result: false, error });
+        return res.status(200).json({ result: false, error });
     }
 });
 // get all favourite by id user
@@ -110,7 +127,7 @@ router.get('/favourite/get-book-by-user/:idUser', async (req, res, next) => {
             }
         }
     } catch (error) {
-        return res.status(201).json({ result: false, message: error + idUser });
+        return res.status(200).json({ result: false, message: error + idUser });
     }
 });
 // get category

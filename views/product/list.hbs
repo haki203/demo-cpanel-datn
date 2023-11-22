@@ -267,9 +267,10 @@
                             <thead>
                                 <tr>
                                     <th scope="col">Hình ảnh</th>
-                                    <th scope="col">Tên sách</th>
+                                    <th style="width: 200px;" scope="col">Tên sách</th>
                                     <th scope="col">Năm xuất bản</th>
                                     <th scope="col">Giới thiệu</th>
+                                    <th scope="col"></th>
                                 </tr>
                             </thead>
 
@@ -279,9 +280,13 @@
                                     <td>
                                         <img style="width:150px; height: 180px;" src="{{this.image}}">
                                     </td>
-                                    <td>{{this.title}}</td>
-                                    <td>{{this.publicAt}}</td>
-                                    <td>{{this.description}}</td>
+                                    <td style="font-weight: bold;">{{this.title}}</td>
+                                    <td style="color: green;font-weight: bold;">{{this.publicAt}}</td>
+                                    <td style="text-align: justify;">{{this.description}}</td>
+                                    <td>
+                                        <a  href="/cpanel/product/{{this._id}}/edit" class="btn btn-primary w-100">Edit</a>
+                                        <a onclick="confirmDelete('{{this._id}}');" class="btn btn-danger w-100">Delete</a>
+                                    </td>
                                     {{!-- <td class="types">{{this.type}}</td>
 
                                     <td>
