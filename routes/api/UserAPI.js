@@ -75,7 +75,7 @@ router.post('/update-user', async (req, res, next) => {
     try {
         const { id, name, email, phone, avatar } = req.body;
         if (!id || !name || !email || !phone || !avatar) {
-            return res.status(444).json({ result: false, message: "thieu thong tin" });
+            return res.status(201).json({ result: false, message: "thieu thong tin" });
         }
         try {
             const user = await userModel.findByIdAndUpdate(id, { full_name: name, email: email, avatar: avatar, phone: phone });
