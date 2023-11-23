@@ -38,6 +38,16 @@
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
 </head>
+<script>
+    // Kiểm tra nếu có thông báo lỗi trong URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const successful = urlParams.get('successful');
+
+    // Hiển thị thông báo nếu có lỗi
+    if (successful === 'true') {
+        alert('Cập nhật thành công');
+    }
+</script>
 
 <body>
 
@@ -269,7 +279,10 @@
                                     <th scope="col">Hình ảnh</th>
                                     <th style="width: 200px;" scope="col">Tên sách</th>
                                     <th scope="col">Năm xuất bản</th>
+                                    <th scope="col">Thể loại</th>
+                                    <th scope="col">Tác giả</th>
                                     <th scope="col">Giới thiệu</th>
+
                                     <th scope="col"></th>
                                 </tr>
                             </thead>
@@ -282,10 +295,15 @@
                                     </td>
                                     <td style="font-weight: bold;">{{this.title}}</td>
                                     <td style="color: green;font-weight: bold;">{{this.publicAt}}</td>
+                                    <td style="color: green;font-weight: bold;">{{this.categoryId.name}}</td>
+                                    <td style="color: green;font-weight: bold;">{{this.authorId.name}}</td>
                                     <td style="text-align: justify;">{{this.description}}</td>
+
                                     <td>
-                                        <a  href="/cpanel/product/{{this._id}}/edit" class="btn btn-primary w-100">Edit</a>
-                                        <a onclick="confirmDelete('{{this._id}}');" class="btn btn-danger w-100">Delete</a>
+                                        <a href="/cpanel/product/{{this._id}}/edit"
+                                            class="btn btn-primary w-100">Edit</a>
+                                        <a onclick="confirmDelete('{{this._id}}');"
+                                            class="btn btn-danger w-100">Delete</a>
                                     </td>
                                     {{!-- <td class="types">{{this.type}}</td>
 
@@ -302,38 +320,7 @@
                                 </tr>
                                 {{/each}}
                             </tbody>
-                            <script>
-                                // Lấy tất cả các dòng có class "types"
-                                const typeCells = document.querySelectorAll('.types');
-                                // Lặp qua từng dòng và kiểm tra giá trị của "this.type"
-                                typeCells.forEach((cell) => {
 
-                                    const typeValue = cell.textContent.trim(); // Lấy giá trị của "this.type" và loại bỏ khoảng trắng
-                                    if (typeValue === '1') {
-                                        cell.textContent = 'Sự cố về CNTT';
-                                    } else if (typeValue === '2') {
-                                        cell.textContent = 'Sự cố về cơ sở vật chất';
-                                    }
-                                });
-
-
-                                const typeCells2 = document.querySelectorAll('.status');
-                                // Lặp qua từng dòng và kiểm tra giá trị của "this.type"
-                                typeCells2.forEach((cell) => {
-                                    const typeValue2 = cell.textContent.trim(); // Lấy giá trị của "this.type" và loại bỏ khoảng trắng
-
-                                    if (typeValue2 == 0 || typeValue2 == '0') {
-                                        cell.textContent = 'Gửi yêu cầu';
-                                    }
-                                    else if (typeValue2 == 1 || typeValue2 == '1') {
-                                        cell.textContent = 'Đã tiếp nhận';
-                                    } else if (typeValue2 == 2 || typeValue2 == '2') {
-                                        cell.textContent = 'Đã hoàn thành';
-                                    } else {
-                                        cell.textContent = typeValue2;
-                                    }
-                                });
-                            </script>
 
                             <!-- End Default Table Example -->
                         </table>

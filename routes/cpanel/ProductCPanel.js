@@ -3,6 +3,8 @@ var router = express.Router();
 const productController = require('../../components/products/ProductController');
 const productModel = require('../../components/products/ProductModel');
 const uploadFile = require('../../middle/UploadFile');
+const CategoryModel = require('../../components/products/CategoryModel');
+const AuthorModel = require('../../components/products/AuthorModel');
 
 async function uploadFiles(path, filename) {
     // Upload the File
@@ -18,8 +20,15 @@ async function uploadFiles(path, filename) {
 //localhost:3000/cpanel/product
 router.get('/', async (req, res, next) => {
     //hien thi trang danh sach sp
-    const products = await productModel.find({})
-    res.render('product/list', { products });
+    try {
+        const products = await productModel.find({}).populate('categoryId').populate('authorId');
+        //console.log("product ne: ", products[0]);
+
+        res.render('product/list', { products });
+    } catch (error) {
+        console.log(error);
+    }
+
 });
 
 router.get('/:id/delete', async (req, res, next) => {
@@ -36,17 +45,19 @@ router.get('/:id/delete', async (req, res, next) => {
 //xu ly cap nhat sp
 router.post('/:id/edit', [uploadFile.single('image'),], async (req, res, next) => {
     try {
-        let { body, file } = req;
-        let { id } = req.params;
-        if (file) {
-            let image = `http://${CONFIG.CONSTANTS.IP}:3000/images/${file.filename}`;
-            body = { ...body, image: image }
+        const { body } = req;
+        const { id } = req.params;
+
+        const { title, description, pdf, image, audio, category, author, publicAt } = body;
+        console.log("body ne: ",body);
+        const product = await productModel.findByIdAndUpdate(id,
+            { title: title, description: description, pdf: pdf, image: image, audio: audio, categoryId: category, authorId: author, publicAt: publicAt })
+        if (product) {
+            //console.log("product sau khi cap nhat ne: ", product);
+            return res.redirect('/cpanel/product?successful=true');
+        } else {
+            return res.redirect('/cpanel/product?error=invalid');
         }
-        let { name, price, quantity, image, category } = body;
-        console.log(body);
-        await productController
-            .updateProduct(id, name, price, quantity, image, category);
-        return res.redirect('/cpanel/product');
     } catch (error) {
         console.log('Add new product error: ', error)
         next(error);
@@ -57,18 +68,30 @@ router.post('/:id/edit', [uploadFile.single('image'),], async (req, res, next) =
 router.get('/:id/edit', async (req, res, next) => {
     try {
         const { id } = req.params;
-        const product = await productController.getProductById(id);
-        const categories = await categoryController.getAllCategories();
+        //const product = await productController.getProductById(id);
+        const product = await productModel.findById(id);
+        const categories = await CategoryModel.find({})
+        const authors = await AuthorModel.find({});
+        console.log(authors);
         console.log(product);
         console.log(categories);
         for (let index = 0; index < categories.length; index++) {
             const element = categories[index];
+            //console.log("element ne: ", element);
             categories[index].selected = false;
-            if (element._id.toString() == product.category.toString()) {
+            if (element._id.toString() == product.categoryId.toString()) {
                 categories[index].selected = true;
             }
         }
-        res.render('product/edit', { product, categories });
+        for (let index = 0; index < authors.length; index++) {
+            const element = authors[index];
+            //console.log("element ne: ", element);
+            authors[index].selected = false;
+            if (element._id.toString() == product.authorId.toString()) {
+                authors[index].selected = true;
+            }
+        }
+        res.render('product/edit', { product, categories, authors });
     } catch (error) {
         next(error);
     }

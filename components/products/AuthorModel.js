@@ -8,6 +8,7 @@ const schema = new Schema({
     place: { type: String },
     introduce: { type: String },
     career: { type: String },
+    selected: { type: Boolean },
 
 });
 // Đảm bảo rằng bảng Products chưa được định nghĩa trước đó
