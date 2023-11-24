@@ -184,6 +184,19 @@ router.get('/get-by-category/:categoryId', async (req, res) => {
         res.status(201).json({ error: 'Đã có lỗi xảy ra' });
     }
 });
+router.get('/authors/getAll', async (req, res) => {
+    try {
+        const authors = await authorModel.find({});
+        if (authors) {
+            res.status(200).json({ result: true, authors });
+        }
+        else {
+            res.status(201).json({ result: false });
+        }
+    } catch (err) {
+        res.status(201).json({ error: 'Đã có lỗi xảy ra' });
+    }
+});
 router.post('/comment/new', async (req, res) => {
     try {
         const { userId, bookId, title, content, rate } = req.body;
