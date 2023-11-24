@@ -98,7 +98,7 @@ router.post('/update-user', async (req, res, next) => {
 router.get('/logout', async (req, res, next) => {
     try {
         req.session.destroy;
-        let data = {
+        let data = {   
             logout: true,
             responeTimestamp: new Date(),
             statusCode: 200,

@@ -8,7 +8,27 @@
     <title>Forms / Validation - NiceAdmin Bootstrap Template</title>
     <meta content="" name="description">
     <meta content="" name="keywords">
+<!-- Favicons -->
+    <link href="assets/img/favicon.png" rel="icon">
+    <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
+    <!-- Google Fonts -->
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <link
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+        rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="../assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+    <link href="../assets/vendor/quill/quill.snow.css" rel="stylesheet">
+    <link href="../assets/vendor/quill/quill.bubble.css" rel="stylesheet">
+    <link href="../assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+    <link href="../assets/vendor/simple-datatables/style.css" rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link href="../assets/css/style.css" rel="stylesheet">
     <!-- Favicons -->
     <link href="assets/img/favicon.png" rel="icon">
     <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
@@ -198,56 +218,47 @@
 
     <!-- ======= Sidebar ======= -->
     <aside id="sidebar" class="sidebar">
+
         <ul class="sidebar-nav" id="sidebar-nav">
+
+
             <li class="nav-item">
-                <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
-                    <i class="bi bi-journal-text"></i><span>Product</span><i class="bi bi-chevron-down ms-auto"></i>
-                </a>
-                <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                    <li>
-                        <a href="/cpanel/product">
-                            <i class="bi bi-circle"></i><span>Product</span>
-                        </a>
-                        <a href="/cpanel/product/new">
-                            <i class="bi bi-circle"></i><span>Add New Product</span>
-                        </a>
-                    </li>
-                </ul>
-            </li><!-- End Forms Nav -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="pages-contact.html">
-                    <i class="bi bi-envelope"></i>
-                    <span>Contact</span>
+                <a href="/cpanel/user" class="nav-link collapsed" href="pages-contact.html">
+                    <i class="bi bi-person-square"></i>
+                    <span>User</span>
                 </a>
             </li><!-- End Contact Page Nav -->
-
             <li class="nav-item">
-                <a class="nav-link collapsed" href="pages-register.html">
-                    <i class="bi bi-card-list"></i>
-                    <span>Register</span>
+                <a href="/cpanel/product" class="nav-link collapsed" href="pages-contact.html">
+                    <i class="bi bi-book"></i>
+                    <span>Books</span>
                 </a>
-            </li><!-- End Register Page Nav -->
-
+            </li><!-- End Contact Page Nav -->
             <li class="nav-item">
-                <a class="nav-link collapsed" href="/login">
+                <a href="/cpanel/product/new" class="nav-link collapsed" href="pages-contact.html">
+                    <i class="bi bi-book"></i>
+                    <span>+ Book</span>
+                </a>
+            </li><!-- End Contact Page Nav -->
+                        <li class="nav-item">
+                <a href="/cpanel/product" class="nav-link collapsed" href="pages-contact.html">
+                    <i class="bi bi-book"></i>
+                    <span>+ Author</span>
+                </a>
+            </li><!-- End Contact Page Nav -->
+                        <li class="nav-item">
+                <a href="/cpanel/product" class="nav-link collapsed" href="pages-contact.html">
+                    <i class="bi bi-book"></i>
+                    <span>+ Category</span>
+                </a>
+            </li><!-- End Contact Page Nav -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="/logout">
                     <i class="bi bi-box-arrow-in-right"></i>
-                    <span>Login</span>
+                    <span>Logout</span>
                 </a>
             </li><!-- End Login Page Nav -->
 
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="pages-error-404.html">
-                    <i class="bi bi-dash-circle"></i>
-                    <span>Error 404</span>
-                </a>
-            </li><!-- End Error 404 Page Nav -->
-
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="pages-blank.html">
-                    <i class="bi bi-file-earmark"></i>
-                    <span>Blank</span>
-                </a>
-            </li><!-- End Blank Page Nav -->
 
         </ul>
 
@@ -268,52 +279,67 @@
                             Depending on your browser and OS, you’ll see a slightly different style of feedback.</p>
 
                         <!-- Browser Default Validation -->
-                        <form class="row g-3" method="post" action="/cpanel/product/testUploadImage"
-                            enctype="multipart/form-data">
+                        <form class="row g-3" method="post" action="/cpanel/product/new"
+                            >
                             <div class="col-md-12">
-                                <label for="validationDefault01" class="form-label">title</label>
+                                <label for="validationDefault01" class="form-label">Tên sách</label>
                                 <input type="text" name="title" class="form-control" id="validationDefault01" value=""
                                     required>
                             </div>
                             <div class="col-12">
-                                <label for="validationDefault03" class="form-label">Cagetory</label>
-                                <select class="form-select" name="categoryId" aria-label="Default select example">
+                                <label for="validationDefault03" class="form-label">Danh mục</label>
+                                <select class="form-select" name="category" aria-label="Default select example">
                                     {{#each categories}}
                                     <option value="{{this._id}}">{{this.name}}</option>
                                     {{/each}}
                                 </select>
                             </div>
                             <div class="col-12">
-                                <label for="validationDefault03" class="form-label">Author</label>
-                                <select class="form-select" name="authorId" aria-label="Default select example">
+                                <label for="validationDefault03" class="form-label">Tác giả</label>
+                                <select class="form-select" name="author" aria-label="Default select example">
                                     {{#each authors}}
                                     <option value="{{this._id}}">{{this.name}}</option>
                                     {{/each}}
                                 </select>
                             </div>
                             <div class="col-md-12">
-                                <label for="validationDefault01" class="form-label">Description</label>
+                                <label for="validationDefault01" class="form-label">Mô tả</label>
                                 <input type="text" name="description" class="form-control" id="validationDefault01"
                                     value="" required>
                             </div>
+
                             <div class="col-md-12">
-                                <label for="validationDefault02" class="form-label">CreateAt</label>
-                                <input name="createAt" class="form-control" 
-                                    >
+                                <label for="validationDefault02" class="form-label">Hình ảnh</label>
+                                <input type="text" oninput="updateImage(this.value)" name="image" class="form-control"
+                                    id="validationDefault02" value="{{product.image}}" required>
+                                <img id="img" style="width: 100px;height: 120px;" />
                             </div>
+                            <script>
+                                function updateImage(newSrc) {
+                                    // Lấy thẻ img
+                                    var imgElement = document.getElementById("img");
+
+                                    // Cập nhật đường dẫn hình ảnh của thẻ img
+                                    imgElement.src = newSrc;
+                                }
+                            </script>
                             <div class="col-md-12">
-                                <label for="validationDefault02" class="form-label">UpdateAt</label>
-                                <input name="updateAt" class="form-control" 
-                                    >
-                            </div>
-                            <div class="col-md-12">
-                                <label for="validationDefault03" class="form-label">Image</label>
-                                <input type="updateAt" name="image" class="form-control" id="validationDefault03"
+                                <label for="validationDefault03" class="form-label">PDF</label>
+                                <input type="text" name="pdf" class="form-control" id="validationDefault03"
                                     required>
                             </div>
-
+                            <div class="col-md-12">
+                                <label for="validationDefault03" class="form-label">Audio</label>
+                                <input type="text" name="audio" class="form-control" id="validationDefault03"
+                                    required>
+                            </div>
+                            <div class="col-md-12">
+                                <label for="validationDefault03" class="form-label">Năm xuất bản</label>
+                                <input type="number" name="publicAt" class="form-control" id="validationDefault03"
+                                    required>
+                            </div>
                             <div class="col-12">
-                                <button class="btn btn-primary" type="submit">Submit form</button>
+                                <button class="btn btn-primary" type="submit">Thêm</button>
                             </div>
 
                         </form>

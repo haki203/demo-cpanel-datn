@@ -1,3 +1,8 @@
-<h1>{{message}}</h1>
-<h2>{{error.status}}</h2>
-<pre>{{error.stack}}</pre>
+<h2>{{error}}</h2>
+<script>
+    // Kiểm tra nếu có thông báo lỗi trong URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+
+        alert(error);
+</script>

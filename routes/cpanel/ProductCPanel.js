@@ -5,7 +5,12 @@ const productModel = require('../../components/products/ProductModel');
 const uploadFile = require('../../middle/UploadFile');
 const CategoryModel = require('../../components/products/CategoryModel');
 const AuthorModel = require('../../components/products/AuthorModel');
-
+const moment = require('moment');
+const multer = require('multer');
+const upload = multer(); // Khởi tạo multer
+const app = express();
+app.use(express.json());
+app.use(upload.none()); // Sử dụng multer để xử lý dữ liệu form
 async function uploadFiles(path, filename) {
     // Upload the File
     const storage = await storageRef.upload(path, {
@@ -49,7 +54,7 @@ router.post('/:id/edit', [uploadFile.single('image'),], async (req, res, next) =
         const { id } = req.params;
 
         const { title, description, pdf, image, audio, category, author, publicAt } = body;
-        console.log("body ne: ",body);
+        console.log("body ne: ", body);
         const product = await productModel.findByIdAndUpdate(id,
             { title: title, description: description, pdf: pdf, image: image, audio: audio, categoryId: category, authorId: author, publicAt: publicAt })
         if (product) {
@@ -63,7 +68,77 @@ router.post('/:id/edit', [uploadFile.single('image'),], async (req, res, next) =
         next(error);
     }
 });
+router.get('/new', async (req, res, next) => {
+    // hien thi add sp
+    const categories = await CategoryModel.find({})
+    const authors = await AuthorModel.find({})
+    res.render('product/new', { categories, authors });
 
+});
+router.get('/author', async (req, res, next) => {
+    // hien thi add sp
+    console.log("author ne");
+    res.render('product/author');
+
+});
+// xu ly add sp
+router.post('/author', async (req, res, next) => {
+
+    try {
+        const { body } = req;
+
+        const { name,image,introduce,career,place, } = body;
+        console.log("body ne: ", body);
+
+
+        const bodyNew = {
+            name:name,image:image,introduce:introduce,career:career,place:place
+        }
+        console.log("body ne: ", bodyNew);
+
+        const newProduct = await AuthorModel.create(bodyNew);
+        if(newProduct){
+            return res.redirect('/cpanel/product');
+        }else{
+            return res.redirect('/error?error=ko them dc product');
+        }
+
+    } catch (error) {
+        console.log('Add new product error: ', error)
+        next(error);
+    }
+})
+router.post('/new', async (req, res, next) => {
+
+    const createAt = moment().add(7, 'hours').format('DD-MM-YYYY');
+    const updateAt = moment().add(7, 'hours').format('DD-MM-YYYY');
+    try {
+        const { body } = req;
+
+        const { title, image, description, publicAt, category, author, pdf, audio } = body;
+        console.log("body ne: ", body);
+
+        const last_search = new Date();
+        const rate = 0;
+        const search = 1;
+        const bodyNew = {
+            title: title, authorId: author, categoryId: category, description: description,
+            image: image, createAt: createAt, updateAt: updateAt, pdf: pdf, audio: audio, last_search: last_search, rate: rate, search: search, publicAt: publicAt
+        }
+        console.log("body ne: ", bodyNew);
+
+        const newProduct = await productModel.create(bodyNew);
+        if(newProduct){
+            return res.redirect('/cpanel/product');
+        }else{
+            return res.redirect('/error?error=ko them dc product');
+        }
+
+    } catch (error) {
+        console.log('Add new product error: ', error)
+        next(error);
+    }
+})
 // hien thi trang cap nhat sp /cpanel/product/:id/edit
 router.get('/:id/edit', async (req, res, next) => {
     try {
