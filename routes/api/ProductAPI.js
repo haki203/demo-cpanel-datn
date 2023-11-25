@@ -208,14 +208,14 @@ router.post('/add-muc-luc', async (req, res) => {
         for (let i = 0; i < book.length; i++) {
             if (book[i].chuong == chuong) {
                 const newBook = await MucLucModel.findByIdAndUpdate(book[i]._id, { title: title, position: position })
-                if(newBook){
-                    return res.status(200).json({ result: true, ml: newBook,message:'update thanh cong' });
+                if (newBook) {
+                    return res.status(200).json({ result: true, ml: newBook, message: 'update thanh cong' });
                 }
             }
         }
         const ml = await MucLucModel.create(newML)
         if (ml) {
-            return res.status(200).json({ result: true, ml ,message:'them thanh cong'});
+            return res.status(200).json({ result: true, ml, message: 'them thanh cong' });
         }
         else {
             return res.status(201).json({ result: false });
@@ -275,28 +275,39 @@ router.get('/nameBook/:name', async (req, res) => {
 
 router.post('/library/add', async (req, res) => {
     try {
-        const { user,book,max,index } = req.body;
-        const body = {userId:user,bookId:book,max:max,index:index}
+        const { user, book, max, index } = req.body;
+
+        const all = await LibraryModel.find({})
+
+        for (let i = 0; i < all.length; i++) {
+            if (all[i].userId == user && all[i].bookId == book) {
+                const progress =Math.round((all[i].index / all[i].max) * 100); ;
+                const librarys = await LibraryModel.findByIdAndUpdate(all[i]._id, { index: index, progress: progress })
+                return res.status(200).json({ result: true, library: librarys,message:"update thanh cong" });
+            }
+        }
+        const progressNew=Math.round((index / max) * 100);
+        const body = { userId: user, bookId: book, max: max, index: index,progress:progressNew }
         const library = await LibraryModel.create(body);
         if (library) {
-            res.status(200).json({ result: true, library });
+            res.status(200).json({ result: true, library,message:"them thanh cong"  });
         }
         else {
             res.status(201).json({ result: false });
         }
     } catch (err) {
-        res.status(201).json({ error: 'Đã có lỗi xảy ra' });
+        res.status(201).json({ error: 'Đã có lỗi xảy ra', err });
     }
 });
 router.get('/library/:id', async (req, res) => {
     try {
-        const { id} = req.params;
-        console.log("id ne: ",id);
-        const library = await LibraryModel.find({userId:id})
+        const { id } = req.params;
+        console.log("id ne: ", id);
+        const library = await LibraryModel.find({ userId: id })
         if (library) {
-            const progress=(library[0].index/library[0].max)*100;
+            const progress = (library[0].index / library[0].max) * 100;
             console.log(library);
-            return res.status(200).json({ result: true, library,progress,message:"cc" });
+            return res.status(200).json({ result: true, library, progress, message: "cc" });
         }
         else {
             return res.status(201).json({ result: false });
