@@ -10,6 +10,8 @@ const productController = require('../../components/products/ProductController')
 const UploadFile = require('../../middle/UploadFile');
 const favouriteModel = require('../../components/products/FavouriteModel');
 const userModel = require('../../components/users/UserModel');
+const MucLucModel = require('../../components/products/MucLucModel');
+const LibraryModel = require('../../components/products/LibraryModel');
 //api/product
 router.get('/', async (req, res, next) => {
     try {
@@ -42,7 +44,7 @@ router.get('/author/:id', async (req, res, next) => {
 // get book by id authior
 router.get('/get-book-by-author/:id', async (req, res, next) => {
     const { id } = req.params;
-    let ids =new  mongoose.Types.ObjectId(id);
+    let ids = new mongoose.Types.ObjectId(id);
     console.log(ids);
     try {
 
@@ -195,6 +197,112 @@ router.get('/authors/getAll', async (req, res) => {
         }
     } catch (err) {
         res.status(201).json({ error: 'Đã có lỗi xảy ra' });
+    }
+});
+router.post('/add-muc-luc', async (req, res) => {
+    try {
+        const { bookId, title, position, chuong } = req.body;
+        console.log(bookId, title, position, chuong);
+        const newML = { bookId: bookId, title: title, position: position, chuong: chuong }
+        const book = await MucLucModel.find({ bookId: bookId })
+        for (let i = 0; i < book.length; i++) {
+            if (book[i].chuong == chuong) {
+                const newBook = await MucLucModel.findByIdAndUpdate(book[i]._id, { title: title, position: position })
+                if(newBook){
+                    return res.status(200).json({ result: true, ml: newBook,message:'update thanh cong' });
+                }
+            }
+        }
+        const ml = await MucLucModel.create(newML)
+        if (ml) {
+            return res.status(200).json({ result: true, ml ,message:'them thanh cong'});
+        }
+        else {
+            return res.status(201).json({ result: false });
+        }
+
+
+    } catch (err) {
+        return res.status(201).json({ error: 'Đã có lỗi xảy ra ', err });
+    }
+});
+router.get('/get-muc-luc/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const ml = await MucLucModel.find({ bookId: id })
+        console.log(id);
+        if (ml) {
+            res.status(200).json({ result: true, ml });
+        }
+        else {
+            res.status(201).json({ result: false });
+        }
+    } catch (err) {
+        res.status(201).json({ error: 'Đã có lỗi xảy ra' });
+    }
+});
+router.get('/nameBook/:name', async (req, res) => {
+    try {
+        const { name } = req.params;
+        const ml = await productModel.findOne({ title: { $regex: new RegExp(name, 'i') } });
+        if (ml) {
+            res.status(200).json({ result: true, ml });
+        }
+        else {
+            res.status(201).json({ result: false });
+        }
+    } catch (err) {
+        res.status(201).json({ error: 'Đã có lỗi xảy ra' });
+    }
+});
+// lay thu vien
+// router.get('/library/:idUser', async (req, res) => {
+//     try {
+//         const { idUser } = req.params;
+//         const ml = await LibraryModel.find({ userId: idUser })
+
+//         if (ml) {
+//             res.status(200).json({ result: true, ml });
+//         }
+//         else {
+//             res.status(201).json({ result: false });
+//         }
+//     } catch (err) {
+//         res.status(201).json({ error: 'Đã có lỗi xảy ra' });
+//     }
+// });
+// them thu vien
+
+router.post('/library/add', async (req, res) => {
+    try {
+        const { user,book,max,index } = req.body;
+        const body = {userId:user,bookId:book,max:max,index:index}
+        const library = await LibraryModel.create(body);
+        if (library) {
+            res.status(200).json({ result: true, library });
+        }
+        else {
+            res.status(201).json({ result: false });
+        }
+    } catch (err) {
+        res.status(201).json({ error: 'Đã có lỗi xảy ra' });
+    }
+});
+router.get('/library/:id', async (req, res) => {
+    try {
+        const { id} = req.params;
+        console.log("id ne: ",id);
+        const library = await LibraryModel.find({userId:id})
+        if (library) {
+            const progress=(library[0].index/library[0].max)*100;
+            console.log(library);
+            return res.status(200).json({ result: true, library,progress,message:"cc" });
+        }
+        else {
+            return res.status(201).json({ result: false });
+        }
+    } catch (err) {
+        return res.status(201).json({ error: 'Đã có lỗi xảy ra' });
     }
 });
 router.post('/comment/new', async (req, res) => {
