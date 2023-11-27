@@ -201,25 +201,53 @@ router.get('/authors/getAll', async (req, res) => {
 });
 router.post('/add-muc-luc', async (req, res) => {
     try {
-        const { bookId, title, position, chuong } = req.body;
-        console.log(bookId, title, position, chuong);
-        const newML = { bookId: bookId, title: title, position: position, chuong: chuong }
+        const { bookId, title1, position1, title2, position2, title3, position3 } = req.body;
+        const newML1 = { bookId: bookId, title: title1, position: position1, chuong: 1 }
+        const newML2 = { bookId: bookId, title: title2, position: position2, chuong: 2 }
+        const newML3 = { bookId: bookId, title: title3, position: position3, chuong: 3 }
         const book = await MucLucModel.find({ bookId: bookId })
+        let resultUpdate = [];
+        let isUpdate = false;
         for (let i = 0; i < book.length; i++) {
-            if (book[i].chuong == chuong) {
-                const newBook = await MucLucModel.findByIdAndUpdate(book[i]._id, { title: title, position: position })
+            if (book[i].chuong == 1) {
+                const newBook = await MucLucModel.findByIdAndUpdate(book[i]._id, { title: title1, position: position1 })
                 if (newBook) {
-                    return res.status(200).json({ result: true, ml: newBook, message: 'update thanh cong' });
+                    //res.status(200).json({ result: true, ml: newBook, message: 'update chuong1 thanh cong' });
+                    resultUpdate.push('update chuong1 thanh cong')
                 }
+                isUpdate = true;
             }
+            if (book[i].chuong == 2) {
+                const newBook = await MucLucModel.findByIdAndUpdate(book[i]._id, { title: title2, position: position2 })
+                if (newBook) {
+                    //res.status(200).json({ result: true, ml: newBook, message: 'update chuong2 thanh cong' });
+                    resultUpdate.push('update chuong2 thanh cong')
+
+                }
+                isUpdate = true;
+
+            }
+            if (book[i].chuong == 3) {
+                const newBook = await MucLucModel.findByIdAndUpdate(book[i]._id, { title: title3, position: position3 })
+                if (newBook) {
+                    //res.status(200).json({ result: true, ml: newBook, message: 'update thanh cong' });
+                    resultUpdate.push('update chuong3 thanh cong')
+
+                }
+                isUpdate = true;
+
+            }
+
         }
-        const ml = await MucLucModel.create(newML)
-        if (ml) {
-            return res.status(200).json({ result: true, ml, message: 'them thanh cong' });
+        if (!isUpdate) {
+            const ml1 = await MucLucModel.create(newML1)
+            const ml2 = await MucLucModel.create(newML2)
+            const ml3 = await MucLucModel.create(newML3)
+            return res.status(200).json({ result: true, message: 'them thanh cong', ml1, ml2, ml3 });
+
         }
-        else {
-            return res.status(201).json({ result: false });
-        }
+        return res.status(200).json({ result: true, message: resultUpdate});
+
 
 
     } catch (err) {
@@ -281,16 +309,16 @@ router.post('/library/add', async (req, res) => {
 
         for (let i = 0; i < all.length; i++) {
             if (all[i].userId == user && all[i].bookId == book) {
-                const progress =Math.round((all[i].index / all[i].max) * 100); ;
+                const progress = Math.round((all[i].index / all[i].max) * 100);;
                 const librarys = await LibraryModel.findByIdAndUpdate(all[i]._id, { index: index, progress: progress })
-                return res.status(200).json({ result: true, library: librarys,message:"update thanh cong" });
+                return res.status(200).json({ result: true, library: librarys, message: "update thanh cong" });
             }
         }
-        const progressNew=Math.round((index / max) * 100);
-        const body = { userId: user, bookId: book, max: max, index: index,progress:progressNew }
+        const progressNew = Math.round((index / max) * 100);
+        const body = { userId: user, bookId: book, max: max, index: index, progress: progressNew }
         const library = await LibraryModel.create(body);
         if (library) {
-            res.status(200).json({ result: true, library,message:"them thanh cong"  });
+            res.status(200).json({ result: true, library, message: "them thanh cong" });
         }
         else {
             res.status(201).json({ result: false });
@@ -307,7 +335,7 @@ router.get('/library/:id', async (req, res) => {
         if (library) {
             const progress = (library[0].index / library[0].max) * 100;
             console.log(library);
-            return res.status(200).json({ result: true, library, progress, message: "cc" });
+            return res.status(200).json({ result: true, library });
         }
         else {
             return res.status(201).json({ result: false });
