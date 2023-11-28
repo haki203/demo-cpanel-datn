@@ -12,6 +12,7 @@ const favouriteModel = require('../../components/products/FavouriteModel');
 const userModel = require('../../components/users/UserModel');
 const MucLucModel = require('../../components/products/MucLucModel');
 const LibraryModel = require('../../components/products/LibraryModel');
+const AudioModel = require('../../components/products/AudioModel');
 //api/product
 router.get('/', async (req, res, next) => {
     try {
@@ -246,12 +247,36 @@ router.post('/add-muc-luc', async (req, res) => {
             return res.status(200).json({ result: true, message: 'them thanh cong', ml1, ml2, ml3 });
 
         }
-        return res.status(200).json({ result: true, message: resultUpdate});
+        return res.status(200).json({ result: true, message: resultUpdate });
 
 
 
     } catch (err) {
         return res.status(201).json({ error: 'Đã có lỗi xảy ra ', err });
+    }
+});
+router.post('/audio/new', async (req, res) => {
+    try {
+        const { bookId, audio0, audio1, audio2, audio3 } = req.body;
+        const newAu = { bookId, audio0, audio1, audio2, audio3 };
+        const book = await AudioModel.findOne({ bookId: bookId })
+        if (book) {
+            const newBook = await AudioModel.findOneAndUpdate({ bookId: bookId }, { audio0: audio0, audio1: audio1, audio2: audio2, audio3: audio3 });
+            if (newBook) {
+                return res.status(200).json({ result: true, message: 'update thanh cong', newBook });
+            }else{
+                return res.status(200).json({ result: false, message: 'update ko thanh cong', newBook });
+            }
+        } else {
+            const newAudio = await AudioModel.create(newAu)
+            if (newAudio) {
+                return res.status(200).json({ result: true, message: 'them thanh cong', newAudio });
+            }else{
+                return res.status(200).json({ result: false, message: 'them ko thanh cong', newAudio });
+            }
+        }
+    } catch (error) {
+        return res.status(200).json({ message: error });
     }
 });
 router.get('/get-muc-luc/:id', async (req, res) => {
@@ -261,6 +286,21 @@ router.get('/get-muc-luc/:id', async (req, res) => {
         console.log(id);
         if (ml) {
             res.status(200).json({ result: true, ml });
+        }
+        else {
+            res.status(201).json({ result: false });
+        }
+    } catch (err) {
+        res.status(201).json({ error: 'Đã có lỗi xảy ra' });
+    }
+});
+router.get('/get-audio/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const audios = await AudioModel.find({ bookId: id })
+        console.log(id);
+        if (audios) {
+            res.status(200).json({ result: true, audios });
         }
         else {
             res.status(201).json({ result: false });
