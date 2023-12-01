@@ -343,8 +343,8 @@ router.get('/nameBook/:name', async (req, res) => {
 // });
 router.post('/continue/getProgress', async (req, res) => {
     try {
-        const { userId,bookId } = req.body;
-        const book = await LibraryModel.find({ bookId: bookId,userId:userId })
+        const { userId, bookId } = req.body;
+        const book = await LibraryModel.find({ bookId: bookId, userId: userId })
 
         if (book) {
             res.status(200).json({ result: true, book });
@@ -354,6 +354,47 @@ router.post('/continue/getProgress', async (req, res) => {
         }
     } catch (err) {
         res.status(201).json({ error: 'Đã có lỗi xảy ra' });
+    }
+});
+router.post('/continue/getProgress', async (req, res) => {
+    try {
+        const { userId, bookId } = req.body;
+        const book = await LibraryModel.find({ bookId: bookId, userId: userId })
+
+        if (book) {
+            res.status(200).json({ result: true, book });
+        }
+        else {
+            res.status(201).json({ result: false });
+        }
+    } catch (err) {
+        res.status(201).json({ error: 'Đã có lỗi xảy ra' });
+    }
+});
+router.post('/library/updateProgress', async (req, res) => {
+    try {
+        const { userId, bookId, newIndex } = req.body;
+        if (!userId || !bookId || !newIndex) {
+            res.status(200).json({ result: false, message: 'thieu thong tin' });
+        }
+        const bookData = await LibraryModel.find({ bookId: bookId, userId: userId })
+        if (newIndex > bookData.max) {
+            return res.status(201).json({ result: false });
+        }
+        const newProgress = Math.round((newIndex / bookData[0].max) * 100);
+        const books = await LibraryModel.findOneAndUpdate(
+            { userId, bookId },
+            { $set: { index: newIndex, progress: newProgress } }
+        );
+        if (books) {
+            const book = await LibraryModel.find({ bookId: bookId, userId: userId })
+            res.status(200).json({ result: true, book, message: 'update thanh cong' });
+        }
+        else {
+            res.status(200).json({ result: false });
+        }
+    } catch (err) {
+        res.status(201).json({ error: 'Đã có lỗi xảy ra', err });
     }
 });
 // them thu vien
@@ -388,7 +429,7 @@ router.get('/library/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const library = await LibraryModel.find({ userId: id })
-        if (library) { 
+        if (library) {
             return res.status(200).json({ result: true, library });
         }
         else {
