@@ -16,11 +16,13 @@ const AudioModel = require('../../components/products/AudioModel');
 //api/product
 router.get('/', async (req, res, next) => {
     try {
-        const product = await productController.getAllProducts();
+        const product = await productModel.find({});
         res.status(200).json({ product, result: true });
     } catch (error) {
         res.status(201).json({});
     }
+
+
 });
 router.get('/:id', async (req, res, next) => {
     const { id } = req.params;
@@ -264,14 +266,14 @@ router.post('/audio/new', async (req, res) => {
             const newBook = await AudioModel.findOneAndUpdate({ bookId: bookId }, { audio0: audio0, audio1: audio1, audio2: audio2, audio3: audio3 });
             if (newBook) {
                 return res.status(200).json({ result: true, message: 'update thanh cong', newBook });
-            }else{
+            } else {
                 return res.status(200).json({ result: false, message: 'update ko thanh cong', newBook });
             }
         } else {
             const newAudio = await AudioModel.create(newAu)
             if (newAudio) {
                 return res.status(200).json({ result: true, message: 'them thanh cong', newAudio });
-            }else{
+            } else {
                 return res.status(200).json({ result: false, message: 'them ko thanh cong', newAudio });
             }
         }
@@ -339,6 +341,21 @@ router.get('/nameBook/:name', async (req, res) => {
 //         res.status(201).json({ error: 'Đã có lỗi xảy ra' });
 //     }
 // });
+router.post('/continue/getProgress', async (req, res) => {
+    try {
+        const { userId,bookId } = req.body;
+        const book = await LibraryModel.find({ bookId: bookId,userId:userId })
+
+        if (book) {
+            res.status(200).json({ result: true, book });
+        }
+        else {
+            res.status(201).json({ result: false });
+        }
+    } catch (err) {
+        res.status(201).json({ error: 'Đã có lỗi xảy ra' });
+    }
+});
 // them thu vien
 
 router.post('/library/add', async (req, res) => {
@@ -370,11 +387,8 @@ router.post('/library/add', async (req, res) => {
 router.get('/library/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        console.log("id ne: ", id);
         const library = await LibraryModel.find({ userId: id })
-        if (library) {
-            const progress = (library[0].index / library[0].max) * 100;
-            console.log(library);
+        if (library) { 
             return res.status(200).json({ result: true, library });
         }
         else {
