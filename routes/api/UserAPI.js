@@ -31,11 +31,11 @@ router.get('/payment/:id', async (req, res) => {
         const { id } = req.params;
         // Kiểm tra xem email đã tồn tại trong MongoDB chưa
         let user = await userModel.findByIdAndUpdate(id,{premium:true});
-        if (!user) {
+        if (user) {
             res.status(200).json({ result: true, user: user });
         }
         else{
-            res.status(200).json({ result: false, user: user });
+            res.status(200).json({ result: false,message:"khong co user"});
         }
     } catch (error) {
         res.status(201).json({ result: false, message: 'Internal Server Error' + error });
