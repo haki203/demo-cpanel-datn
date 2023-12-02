@@ -21,8 +21,6 @@ router.get('/', async (req, res, next) => {
     } catch (error) {
         res.status(201).json({});
     }
-
-
 });
 router.get('/:id', async (req, res, next) => {
     const { id } = req.params;

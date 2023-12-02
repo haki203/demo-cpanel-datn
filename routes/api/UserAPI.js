@@ -26,6 +26,21 @@ router.get('/login-google/:email', async (req, res) => {
         res.status(201).json({ result: false, message: 'Internal Server Error' + error });
     }
 });
+router.get('/payment/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        // Kiểm tra xem email đã tồn tại trong MongoDB chưa
+        let user = await userModel.findByIdAndUpdate(id,{premium:true});
+        if (!user) {
+            res.status(200).json({ result: true, user: user });
+        }
+        else{
+            res.status(200).json({ result: false, user: user });
+        }
+    } catch (error) {
+        res.status(201).json({ result: false, message: 'Internal Server Error' + error });
+    }
+});
 router.post('/login', async (req, res, next) => {
     try {
         const { email } = req.body;
