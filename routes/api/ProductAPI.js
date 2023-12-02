@@ -279,6 +279,7 @@ router.post('/audio/new', async (req, res) => {
         return res.status(200).json({ message: error });
     }
 });
+
 router.get('/get-muc-luc/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -309,18 +310,22 @@ router.get('/get-audio/:id', async (req, res) => {
         res.status(201).json({ error: 'Đã có lỗi xảy ra' });
     }
 });
-router.get('/nameBook/:name', async (req, res) => {
+router.post('/nameBook/', async (req, res) => {
     try {
-        const { name } = req.params;
+        const { name } = req.body;
+        if(!name){
+            return res.status(200).json({ result: false, message:'thieu thong tin' });
+
+        }
         const ml = await productModel.findOne({ title: { $regex: new RegExp(name, 'i') } });
         if (ml) {
-            res.status(200).json({ result: true, ml });
+            return res.status(200).json({ result: true, ml });
         }
         else {
-            res.status(201).json({ result: false });
+            return res.status(201).json({ result: false });
         }
     } catch (err) {
-        res.status(201).json({ error: 'Đã có lỗi xảy ra' });
+        return res.status(201).json({ error: 'Đã có lỗi xảy ra' });
     }
 });
 // lay thu vien
