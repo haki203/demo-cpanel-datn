@@ -17,7 +17,17 @@ const AudioModel = require('../../components/products/AudioModel');
 router.get('/', async (req, res, next) => {
     try {
         const product = await productModel.find({});
-        res.status(200).json({ product, result: true });
+       res.status(200).json({ product, result: true });
+
+        // const updateResult = await productModel.updateMany(
+        //     {},
+        //     {
+        //         $set: {
+        //             disable: false, // Thay đổi tên cột mới và giá trị mặc định của bạn
+        //         },
+        //     }
+        // );
+        // res.status(200).json({ updateResult, result: true });
     } catch (error) {
         res.status(201).json({});
     }
@@ -37,6 +47,17 @@ router.get('/author/:id', async (req, res, next) => {
     try {
         console.log(id);
         const author = await authorModel.findById(id);
+        res.status(200).json({ author, result: true });
+    } catch (error) {
+        res.status(201).json({ result: false, error });
+    }
+});
+// get author by id
+router.post('/disable/change', async (req, res, next) => {
+    const { id,disable } = req.body;
+    try {
+        console.log("disable ne: ",disable);
+        const author = await productModel.findByIdAndUpdate(id,{disable:disable});
         res.status(200).json({ author, result: true });
     } catch (error) {
         res.status(201).json({ result: false, error });

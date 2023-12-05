@@ -8,7 +8,8 @@ const schema = new Schema({
     phone:{type:String,required:true},
     role:{type:Number,default:1,},
     avatar:{type:String},
-    premium:{type:Boolean}
+    premium:{type:Boolean},
+    ban:{type:Boolean}
     // 1:user , 100:admin , 1000: super admin system
 });
 module.exports = mongoose.models.user || mongoose.model('users', schema);

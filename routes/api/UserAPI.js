@@ -41,6 +41,31 @@ router.get('/payment/:id', async (req, res) => {
         res.status(201).json({ result: false, message: 'Internal Server Error' + error });
     }
 });
+router.post('/banUser', async (req, res, next) => {
+    try {
+        const { id, ban } = req.body;
+        if (!id) {
+            return res.status(402).json({ result: false });
+        }
+        if (ban==null) {
+            return res.status(403).json({ result: false,message:"Chua co ban" });
+        }
+        else {
+            const getUser = await userModel.find({});
+            const user = await userModel.findByIdAndUpdate(getUser[id]._id, { ban: ban });
+            if (!user) {
+                return res.status(200).json({ result: false });
+            }
+            else {
+                return res.status(200).json({ result: true, user });
+            }
+        }
+
+    } catch (error) {
+        console.log(error);
+        return res.status(400).json({ result: false });
+    }
+});
 router.get('/delete-premium/:id', async (req, res) => {
     try {
         const { id } = req.params;

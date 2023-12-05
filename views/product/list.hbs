@@ -19,7 +19,7 @@
     <link
         href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
         rel="stylesheet">
-<!-- Favicons -->
+    <!-- Favicons -->
     <link href="assets/img/favicon.png" rel="icon">
     <link href="assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
@@ -238,19 +238,19 @@
             <li class="nav-item">
                 <a href="/cpanel/product/new" class="nav-link collapsed" href="pages-contact.html">
                     <i class="bi bi-book"></i>
-                    <span>+ Book</span>
+                    <span>add Book</span>
                 </a>
             </li><!-- End Contact Page Nav -->
-                        <li class="nav-item">
+            <li class="nav-item">
                 <a href="/cpanel/product/author" class="nav-link collapsed" href="pages-contact.html">
                     <i class="bi bi-book"></i>
-                    <span>+ Author</span>
+                    <span>add Author</span>
                 </a>
             </li><!-- End Contact Page Nav -->
-                        <li class="nav-item">
+            <li class="nav-item">
                 <a href="/cpanel/product" class="nav-link collapsed" href="pages-contact.html">
                     <i class="bi bi-book"></i>
-                    <span>+ Category</span>
+                    <span>add Category</span>
                 </a>
             </li><!-- End Contact Page Nav -->
             <li class="nav-item">
@@ -330,26 +330,84 @@
                                     <td>
                                         <a href="/cpanel/product/{{this._id}}/edit"
                                             class="btn btn-primary w-100">Edit</a>
-                                        <a onclick="confirmDelete('{{this._id}}');"
-                                            class="btn btn-danger w-100">Delete</a>
+                                        <a onclick="confirmDeletes('{{this._id}},{{ @index }}');" id="btnDelete"
+                                            class="btn btn-danger w-100 btnDelete">{{this.disable}}</a>
                                     </td>
-                                    {{!-- <td class="types">{{this.type}}</td>
-
-                                    <td>
-                                        {{#if this.admin.full_name}}
-                                        {{this.admin.full_name}}
-                                        {{else}}
-                                        Chưa có ai tiếp nhận
-                                        {{/if}}
-                                    </td>
-
-                                    <td class="limited-lines">{{this.description}}</td>
-                                    <td class="status">{{this.status}}</td> --}}
                                 </tr>
                                 {{/each}}
                             </tbody>
 
+                            <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+                            <script>
+                                const confirmDeletes = (string) => {
+                                    swal({
+                                        title: "Xác nhận!",
+                                        text: "Bạn chắc chưa?",
+                                        icon: "warning",
+                                        buttons: true,
+                                        dangerMode: true,
+                                    })
+                                        .then((willDelete) => {
+                                            if (willDelete) {
+                                                onClickBan(string);
+                                                swal("thành công", {
+                                                    icon: "success",
+                                                });
+                                            } else {
+                                                swal("Oke!");
+                                            }
+                                        });
+                                }
+                                function onClickBan(string) {
+                                    const parts = string.split(',');
 
+                                    // Lấy ID và index từ mảng sau khi đã tách
+                                    const id = parts[0];
+                                    const index = parts[1];
+                                    const apiUrls = 'http://localhost:3000/api/product/disable/change';
+                                    const typeCellBtn = document.querySelectorAll('.btnDelete');
+                                    console.log('id ne: ', id)
+                                    console.log('index ne: ', index)
+                                    let disable = false;
+                                    if (typeCellBtn[index].textContent.trim() === 'Mở khóa sách') {
+                                        disable = false;
+                                    } else if (typeCellBtn[index].textContent.trim() === 'Khóa sách') {
+                                        disable = true;
+                                    }
+                                    console.log('disable ne: ', disable)
+
+                                    axios.post(apiUrls, { id: id, disable:disable })
+                                        .then(response => {
+                                            console.log(response.data.message)
+                                            if (response.data.result) {
+                                                // Cập nhật UI hoặc xử lý dữ liệu khi cần
+                                                console.log('User đã được cấm');
+                                                window.location.reload()
+                                            } else {
+                                                console.log('Không thể cấm user.');
+                                            }
+                                        })
+                                        .catch(error => {
+                                            console.error('Lỗi khi gọi API:', error);
+                                        });
+                                }
+                                const typeCell = document.querySelectorAll('.btnDelete');
+                                typeCell.forEach((cell) => {
+                                    console.log("action ne: ", cell.textContent.trim())
+                                    const typeValues = cell.textContent.trim(); // Lấy giá trị của "this.type" và loại bỏ khoảng trắng
+                                    if (typeValues === 'false') {
+                                        cell.textContent = 'Khóa sách';
+                                        cell.style.backgroundColor = 'red';
+
+                                    }
+                                    else if (typeValues === 'true') {
+                                        cell.textContent = 'Mở khóa sách';
+                                        cell.style.backgroundColor = 'green';
+
+                                    }
+                                });
+
+                            </script>
                             <!-- End Default Table Example -->
                         </table>
                     </div>
@@ -388,51 +446,5 @@
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
 </body>
-<script>
-    const fetchAPI = async (url, option) => {
-        const res = await fetch(url, option);
-        return res.json();
-    }
-    const deleteProduct = async (id) => {
-        const url = `/cpanel/product/${id}/delete`;
-        const option = {
-            method: 'get',
-            headers: { 'Content-Type': 'application/json' }
-        }
-        try {
-            const result = await fetchAPI(url, option);
-            console.log('Delete result: ', result);
-            if (result.status) {
-                window.location.reload();
-            }
-            else {
-
-            }
-        }
-        catch (error) {
-            console.log("delete error: " + error);
-        }
-    }
-    const confirmDelete = (id) => {
-        swal({
-            title: "Bạn có chắc không?",
-            text: "Xóa sẽ không phục hồi được đâu, Xác nhận xóa?",
-            icon: "warning",
-            buttons: true,
-            dangerMode: true,
-        })
-            .then((willDelete) => {
-                if (willDelete) {
-                    deleteProduct(id);
-                    swal("Xóa thành công", {
-                        icon: "success",
-                    });
-                } else {
-                    swal("Your imaginary file is safe!");
-                }
-            });
-    }
-
-</script>
 
 </html>
