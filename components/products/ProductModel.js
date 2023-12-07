@@ -19,6 +19,7 @@ const schema = new Schema({
     free: { type: Boolean },
     premium: { type: Boolean },
     disable: { type: Boolean },
+    max: { type: Number },
 });
 // Đảm bảo rằng bảng Products chưa được định nghĩa trước đó
 module.exports = mongoose.model('book', schema, 'books');

@@ -380,16 +380,20 @@ router.post('/continue/getProgress', async (req, res) => {
         res.status(201).json({ error: 'Đã có lỗi xảy ra' });
     }
 });
-router.post('/continue/getProgress', async (req, res) => {
+router.post('/continue/newLibrary', async (req, res) => {
     try {
-        const { userId, bookId } = req.body;
+        const { userId, bookId,index } = req.body;
+        const get = await productModel.findById(bookId)
+        console.log(get.max);
         const book = await LibraryModel.find({ bookId: bookId, userId: userId })
-
-        if (book) {
-            res.status(200).json({ result: true, book });
+        if (book.length>0) {
+            res.status(200).json({ result: false,book });
         }
         else {
-            res.status(201).json({ result: false });
+            const progressNew = Math.round((index / get.max) * 100);
+            const body = { userId: userId, bookId: bookId, max: get.max, index: index, progress: progressNew };
+            const book = await LibraryModel.create(body);
+            res.status(200).json({ result: true,book });
         }
     } catch (err) {
         res.status(201).json({ error: 'Đã có lỗi xảy ra' });
