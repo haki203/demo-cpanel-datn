@@ -343,7 +343,7 @@ router.post('/nameBook/', async (req, res) => {
             return res.status(200).json({ result: true, ml });
         }
         else {
-            return res.status(201).json({ result: false });
+            return res.status(201).json({ result: false,message:"k co sach nay" });
         }
     } catch (err) {
         return res.status(201).json({ error: 'Đã có lỗi xảy ra' });
