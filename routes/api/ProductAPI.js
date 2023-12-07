@@ -403,7 +403,7 @@ router.post('/library/updateProgress', async (req, res) => {
     try {
         const { userId, bookId, newIndex } = req.body;
         if (!userId || !bookId || !newIndex) {
-            res.status(200).json({ result: false, message: 'thieu thong tin' });
+            return res.status(200).json({ result: false, message: 'thieu thong tin' });
         }
         const bookData = await LibraryModel.find({ bookId: bookId, userId: userId })
         if (newIndex > bookData.max) {
@@ -416,13 +416,13 @@ router.post('/library/updateProgress', async (req, res) => {
         );
         if (books) {
             const book = await LibraryModel.find({ bookId: bookId, userId: userId })
-            res.status(200).json({ result: true, book, message: 'update thanh cong' });
+            return res.status(200).json({ result: true, book, message: 'update thanh cong' });
         }
         else {
-            res.status(200).json({ result: false });
+            return res.status(200).json({ result: false });
         }
     } catch (err) {
-        res.status(201).json({ error: 'Đã có lỗi xảy ra', err });
+        return res.status(201).json({ error: 'Đã có lỗi xảy ra', err });
     }
 });
 // them thu vien
