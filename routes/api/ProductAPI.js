@@ -17,7 +17,7 @@ const AudioModel = require('../../components/products/AudioModel');
 router.get('/', async (req, res, next) => {
     try {
         const product = await productModel.find({});
-       res.status(200).json({ product, result: true });
+        res.status(200).json({ product, result: true });
 
         // const updateResult = await productModel.updateMany(
         //     {},
@@ -54,10 +54,10 @@ router.get('/author/:id', async (req, res, next) => {
 });
 // get author by id
 router.post('/disable/change', async (req, res, next) => {
-    const { id,disable } = req.body;
+    const { id, disable } = req.body;
     try {
-        console.log("disable ne: ",disable);
-        const author = await productModel.findByIdAndUpdate(id,{disable:disable});
+        console.log("disable ne: ", disable);
+        const author = await productModel.findByIdAndUpdate(id, { disable: disable });
         res.status(200).json({ author, result: true });
     } catch (error) {
         res.status(201).json({ result: false, error });
@@ -334,8 +334,8 @@ router.get('/get-audio/:id', async (req, res) => {
 router.post('/nameBook/', async (req, res) => {
     try {
         const { name } = req.body;
-        if(!name){
-            return res.status(200).json({ result: false, message:'thieu thong tin' });
+        if (!name) {
+            return res.status(200).json({ result: false, message: 'thieu thong tin' });
 
         }
         const ml = await productModel.findOne({ title: { $regex: new RegExp(name, 'i') } });
@@ -343,7 +343,7 @@ router.post('/nameBook/', async (req, res) => {
             return res.status(200).json({ result: true, ml });
         }
         else {
-            return res.status(201).json({ result: false,message:"k co sach nay" });
+            return res.status(201).json({ result: false, message: "k co sach nay" });
         }
     } catch (err) {
         return res.status(201).json({ error: 'Đã có lỗi xảy ra' });
@@ -382,19 +382,26 @@ router.post('/continue/getProgress', async (req, res) => {
 });
 router.post('/continue/newLibrary', async (req, res) => {
     try {
-        const { userId, bookId,index } = req.body;
+        const { userId, bookId, index } = req.body;
         const get = await productModel.findById(bookId)
-        console.log(get.max);
-        const book = await LibraryModel.find({ bookId: bookId, userId: userId })
-        if (book.length>0) {
-            res.status(200).json({ result: false,book });
+        const old = await LibraryModel.find({ userId: userId, bookId: bookId })
+        if (old) {
+
+        } else {
+
+            console.log(get.max);
+            const book = await LibraryModel.find({ bookId: bookId, userId: userId })
+            if (book.length > 0) {
+                res.status(200).json({ result: false, book });
+            }
+            else {
+                const progressNew = Math.round((index / get.max) * 100);
+                const body = { userId: userId, bookId: bookId, max: get.max, index: index, progress: progressNew };
+                const book = await LibraryModel.create(body);
+                res.status(200).json({ result: true, book });
+            }
         }
-        else {
-            const progressNew = Math.round((index / get.max) * 100);
-            const body = { userId: userId, bookId: bookId, max: get.max, index: index, progress: progressNew };
-            const book = await LibraryModel.create(body);
-            res.status(200).json({ result: true,book });
-        }
+
     } catch (err) {
         res.status(201).json({ error: 'Đã có lỗi xảy ra' });
     }
