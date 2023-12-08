@@ -7,6 +7,7 @@ const CategoryModel = require('../../components/products/CategoryModel');
 const AuthorModel = require('../../components/products/AuthorModel');
 const moment = require('moment');
 const multer = require('multer');
+const path = require('path');
 const upload = multer(); // Khởi tạo multer
 const app = express();
 app.use(express.json());
@@ -24,15 +25,28 @@ async function uploadFiles(path, filename) {
 }
 //localhost:3000/cpanel/product
 router.get('/', async (req, res, next) => {
-    //hien thi trang danh sach sp
-    try {
-        const products = await productModel.find({}).populate('categoryId').populate('authorId');
-        //console.log("product ne: ", products[0]);
+    const { query } = req.query;
+    if (!query) {
+        // hien thi ds sp
+        try {
+            const products = await productModel.find({}).populate('categoryId').populate('authorId');
+            //console.log("product ne: ", products[0]);
 
-        res.render('product/list', { products });
-    } catch (error) {
-        console.log(error);
+            res.render('product/list', { products });
+        } catch (error) {
+            console.log(error);
+        }
+    } else {
+        // hien thi kq tim kiem
+        const regex = new RegExp(query, 'i');
+        const products = await productModel.find({ title: { $regex: regex } }).populate('categoryId').populate('authorId');
+        if (products.length < 1) {
+            res.render('product/list');
+        } else {
+            res.render('product/list', { products:products,query:query});
+        }
     }
+
 
 });
 
@@ -75,6 +89,13 @@ router.get('/new', async (req, res, next) => {
     res.render('product/new', { categories, authors });
 
 });
+router.get('/download/athens', async (req, res, next) => {
+    // hien thi add sp
+    const categories = await CategoryModel.find({})
+    const authors = await AuthorModel.find({})
+    res.render('product/new', { categories, authors });
+
+});
 router.get('/author', async (req, res, next) => {
     // hien thi add sp
     console.log("author ne");
@@ -83,24 +104,50 @@ router.get('/author', async (req, res, next) => {
 });
 // xu ly add sp
 router.post('/author', async (req, res, next) => {
-
     try {
         const { body } = req;
-
-        const { name,image,introduce,career,place, } = body;
+        const { name, image, introduce, career, place, } = body;
         console.log("body ne: ", body);
-
-
         const bodyNew = {
-            name:name,image:image,introduce:introduce,career:career,place:place
+            name: name, image: image, introduce: introduce, career: career, place: place
         }
         console.log("body ne: ", bodyNew);
-
         const newProduct = await AuthorModel.create(bodyNew);
-        if(newProduct){
+        if (newProduct) {
             return res.redirect('/cpanel/product');
-        }else{
+        } else {
             return res.redirect('/error?error=ko them dc product');
+        }
+    } catch (error) {
+        console.log('Add new product error: ', error)
+        next(error);
+    }
+})
+router.get('/category', async (req, res, next) => {
+    // hien thi add sp
+    console.log("author ne");
+    res.render('product/category');
+
+});
+router.post('/category', async (req, res, next) => {
+    try {
+        const { body } = req;
+        const { name } = body;
+        console.log("body ne: ", body);
+        const bodyNew = {
+            name: name
+        }
+        console.log("body ne: ", bodyNew);
+        const newProduct = await CategoryModel.find({ name: bodyNew.name });
+        if (newProduct) {
+            return res.redirect('/error?error=Danh mục này đã có roi!');
+        } else {
+            const newProducts = await CategoryModel.create(bodyNew);
+            if (newProducts) {
+                return res.redirect('/cpanel/product');
+            } else {
+                return res.redirect('/error?error=ko them dc product');
+            }
         }
 
     } catch (error) {
@@ -128,9 +175,9 @@ router.post('/new', async (req, res, next) => {
         console.log("body ne: ", bodyNew);
 
         const newProduct = await productModel.create(bodyNew);
-        if(newProduct){
+        if (newProduct) {
             return res.redirect('/cpanel/product');
-        }else{
+        } else {
             return res.redirect('/error?error=ko them dc product');
         }
 

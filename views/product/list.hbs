@@ -73,10 +73,12 @@
             <i class="bi bi-list toggle-sidebar-btn"></i>
         </div><!-- End Logo -->
 
+
         <div class="search-bar">
-            <form class="search-form d-flex align-items-center" method="POST" action="#">
-                <input type="text" name="query" placeholder="Search" title="Enter search keyword">
-                <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+            <form id="searchForm" class="search-form d-flex align-items-center" method="GET" action="#">
+                <input type="text" id="searchInput" name="query" value="{{query}}" placeholder="Tìm kiếm sách..."
+                    title="Enter search keyword">
+                <button type="submitSearch" title="Search"><i class="bi bi-search"></i></button>
             </form>
         </div><!-- End Search Bar -->
 
@@ -248,7 +250,7 @@
                 </a>
             </li><!-- End Contact Page Nav -->
             <li class="nav-item">
-                <a href="/cpanel/product" class="nav-link collapsed" href="pages-contact.html">
+                <a href="/cpanel/product/category" class="nav-link collapsed" href="pages-contact.html">
                     <i class="bi bi-book"></i>
                     <span>add Category</span>
                 </a>
@@ -376,7 +378,7 @@
                                     }
                                     console.log('disable ne: ', disable)
 
-                                    axios.post(apiUrls, { id: id, disable:disable })
+                                    axios.post(apiUrls, { id: id, disable: disable })
                                         .then(response => {
                                             console.log(response.data.message)
                                             if (response.data.result) {

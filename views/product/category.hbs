@@ -309,52 +309,18 @@
             <div class="col-lg-0"></div>
             <div class="col-lg-9">
                 <div class="pagetitle">
-                    <h1>Thêm tác giả</h1>
+                    <h1>Thêm danh mục</h1>
                 </div><!-- End Page Title -->
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Browser Default</h5>
-                        <p>Browser default validation with using the <code>required</code> keyword. Try submitting the
-                            form below.
-                            Depending on your browser and OS, you’ll see a slightly different style of feedback.</p>
 
                         <!-- Browser Default Validation -->
-                        <form class="row g-3" method="post" action="/cpanel/product/author">
+                        <form class="row g-3" method="post" action="/cpanel/product/category">
                             <div class="col-md-12">
                                 <label for="validationDefault01" class="form-label">Tên</label>
                                 <input type="text" name="name" class="form-control" id="validationDefault01" value=""
                                     required>
                             </div>
-                            <div class="col-md-12">
-                                <label for="validationDefault01" class="form-label">Giới thiệu</label>
-                                <input type="text" name="introduce" class="form-control" id="validationDefault01"
-                                    value="" required>
-                            </div>
-                            <div class="col-md-12">
-                                <label for="validationDefault01" class="form-label">Sự nghiệp</label>
-                                <input type="text" name="career" class="form-control" id="validationDefault01" value=""
-                                    required>
-                            </div>
-                            <div class="col-md-12">
-                                <label for="validationDefault01" class="form-label">Quê quán</label>
-                                <input type="text" name="place" class="form-control" id="validationDefault01" value=""
-                                    required>
-                            </div>
-                            <div class="col-md-12">
-                                <label for="validationDefault02" class="form-label">Hình ảnh</label>
-                                <input type="text" oninput="updateImage(this.value)" name="image" class="form-control"
-                                    id="validationDefault02" value="{{product.image}}" required>
-                                <img id="img" style="width: 100px;height: 120px;" />
-                            </div>
-                            <script>
-                                function updateImage(newSrc) {
-                                    // Lấy thẻ img
-                                    var imgElement = document.getElementById("img");
-
-                                    // Cập nhật đường dẫn hình ảnh của thẻ img
-                                    imgElement.src = newSrc;
-                                }
-                            </script>
                             <div class="col-12">
                                 <button class="btn btn-primary" type="submit">Thêm</button>
                             </div>

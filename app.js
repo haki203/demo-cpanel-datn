@@ -7,6 +7,7 @@ const session = require('express-session');
 const mongoose = require('mongoose');
 require('./components/products/ProductModel');
 var indexRouter = require('./routes/index');
+var downloadApk = require('./routes/download');
 var usersRouter = require('./routes/users');
 const productApiRouter = require('./routes/api/ProductAPI');
 const userApiRouter = require('./routes/api/UserAPI');
@@ -49,6 +50,7 @@ mongoose.connect('mongodb+srv://xuong:844666@cluster0.0urhouz.mongodb.net/datn',
   .catch(err => console.log('>>>>>>>>> DB Error: ', err));
 app.use(cors());
 app.use('/', indexRouter);
+app.use('/download', downloadApk);
 app.use('/users', usersRouter);
 app.use('/api/user', userApiRouter);
 app.use('/api/product', productApiRouter);
