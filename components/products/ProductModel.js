@@ -9,7 +9,7 @@ const schema = new Schema({
     description: { type: String },
     pdf: { type: String },
     image: { type: String },
-    audio: { type: String },
+    audio: { type: String,default:'https://drive.google.com/file/d/1uttPeevCI275ZZcfXOtlYL1_41HmP7JM/view?usp=sharing' },
     createAt: { type: String},
     updateAt: { type: String },
     last_search: { type: Date },
@@ -17,7 +17,6 @@ const schema = new Schema({
     publicAt: { type: Number },
     rate: { type: Number },
     free: { type: Boolean },
-    premium: { type: Boolean },
     disable: { type: Boolean },
     max: { type: Number },
 });

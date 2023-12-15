@@ -48,6 +48,7 @@
         alert('Lỗi');
     }
 </script>
+
 <body>
     <header id="header" class="header fixed-top d-flex align-items-center">
 
@@ -226,13 +227,13 @@
                     <span>add Book</span>
                 </a>
             </li><!-- End Contact Page Nav -->
-                        <li class="nav-item">
+            <li class="nav-item">
                 <a href="/cpanel/product/author" class="nav-link collapsed" href="pages-contact.html">
                     <i class="bi bi-book"></i>
                     <span>add Author</span>
                 </a>
             </li><!-- End Contact Page Nav -->
-                        <li class="nav-item">
+            <li class="nav-item">
                 <a href="/cpanel/product/category" class="nav-link collapsed" href="pages-contact.html">
                     <i class="bi bi-book"></i>
                     <span>add Category</span>
@@ -280,7 +281,7 @@
                             <div class="col-md-12">
                                 <label for="validationDefault02" class="form-label">Audio</label>
                                 <input type="text" name="audio" class="form-control" id="validationDefault02"
-                                    value="{{product.audio}}" required>
+                                    value="{{audioArray}}" required>
                             </div>
                             <div class="col-md-12">
                                 <label for="validationDefault02" class="form-label">Public At</label>
@@ -289,9 +290,27 @@
                             </div>
                             <div class="col-md-12">
                                 <label for="validationDefault02" class="form-label">Image</label>
-                                <input type="text" oninput="updateImage(this.value)" name="image"
-                                    class="form-control" id="validationDefault02" value="{{product.image}}" required>
+                                <input type="text" oninput="updateImage(this.value)" name="image" class="form-control"
+                                    id="validationDefault02" value="{{product.image}}" required>
                                 <img id="img" src="{{product.image}}" style="width: 100px;height: 120px;" />
+                            </div>
+                            <div class="col-md-12">
+                                <label for="validationDefault03" class="form-label">Mục lục</label>
+                                <input type="text" name="mucluc" value="{{muclucs}}" class="form-control"
+                                    id="validationDefault03" required>
+                            </div>
+
+                            <div class="col-md-12">
+                                <label for="validationDefault02" class="form-label">Số trang</label>
+                                <input type="number" name="max" class="form-control" id="validationDefault02"
+                                    value="{{product.max}}" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="validationDefault03" class="form-label">Miễn phí?</label>
+                                <select class="form-select" name="free" aria-label="Default select example">
+                                    <option value="true">Miễn phí</option>
+                                    <option value="false">Không miễn phí</option>
+                                </select>
                             </div>
                             <script>
                                 function updateImage(newSrc) {

@@ -61,7 +61,24 @@
 </head>
 
 <body>
+    <script>
+        window.onload = function () {
+            // Kiểm tra xem đã hiển thị cửa sổ thông báo chưa
+            if (!localStorage.getItem('alertShown')) {
+                // Lấy tham số từ URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const alertMessage = urlParams.get('alert');
 
+                // Kiểm tra xem có tham số alert hay không và hiển thị cửa sổ thông báo
+                if (alertMessage) {
+                    alert(alertMessage);
+
+                    // Đánh dấu là đã hiển thị cửa sổ thông báo
+                    localStorage.setItem('alertShown', 'true');
+                }
+            }
+        };
+    </script>
     <!-- ======= Header ======= -->
     <header id="header" class="header fixed-top d-flex align-items-center">
 

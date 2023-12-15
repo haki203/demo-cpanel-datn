@@ -8,6 +8,9 @@ const AuthorModel = require('../../components/products/AuthorModel');
 const moment = require('moment');
 const multer = require('multer');
 const path = require('path');
+const MucLucModel = require('../../components/products/MucLucModel');
+const AudioModel = require('../../components/products/AudioModel');
+const LibraryModel = require('../../components/products/LibraryModel');
 const upload = multer(); // Khởi tạo multer
 const app = express();
 app.use(express.json());
@@ -43,7 +46,7 @@ router.get('/', async (req, res, next) => {
         if (products.length < 1) {
             res.render('product/list');
         } else {
-            res.render('product/list', { products:products,query:query});
+            res.render('product/list', { products: products, query: query });
         }
     }
 
@@ -61,27 +64,7 @@ router.get('/:id/delete', async (req, res, next) => {
         return res.json({ status: false })
     };
 });
-//xu ly cap nhat sp
-router.post('/:id/edit', [uploadFile.single('image'),], async (req, res, next) => {
-    try {
-        const { body } = req;
-        const { id } = req.params;
 
-        const { title, description, pdf, image, audio, category, author, publicAt } = body;
-        console.log("body ne: ", body);
-        const product = await productModel.findByIdAndUpdate(id,
-            { title: title, description: description, pdf: pdf, image: image, audio: audio, categoryId: category, authorId: author, publicAt: publicAt })
-        if (product) {
-            //console.log("product sau khi cap nhat ne: ", product);
-            return res.redirect('/cpanel/product?successful=true');
-        } else {
-            return res.redirect('/cpanel/product?error=invalid');
-        }
-    } catch (error) {
-        console.log('Add new product error: ', error)
-        next(error);
-    }
-});
 router.get('/new', async (req, res, next) => {
     // hien thi add sp
     const categories = await CategoryModel.find({})
@@ -129,6 +112,40 @@ router.get('/category', async (req, res, next) => {
     res.render('product/category');
 
 });
+router.get('/deleteBook/:id', async (req, res, next) => {
+    // hien thi add sp
+    const { id } = req.params;
+    try {
+        const deleteML = await MucLucModel.findOneAndDelete({ bookId: id })
+        console.log(deleteML);
+
+        const deleteAu = await AudioModel.findOneAndDelete({ bookId: id })
+        console.log(deleteAu);
+        const deleteBook = await productModel.findByIdAndDelete(id)
+        console.log(deleteBook);
+        const deleteTB = await LibraryModel.findOneAndDelete({ bookId: id })
+        console.log(deleteTB);
+        if (!deleteML) {
+            console.log("xoa muc luc thanh cong");
+        }
+        if (!deleteAu) {
+            console.log("xoa au thanh cong");
+
+        }
+        if (!deleteBook) {
+            console.log("xoa book thanh cong");
+
+        }
+        if (!deleteTB) {
+            console.log("xoa thu vien thanh cong");
+
+        }
+    } catch (error) {
+        console.log(error);
+    }
+    return res.status(200).json({ result: false, message: 'xoa thanh conng' });
+
+});
 router.post('/category', async (req, res, next) => {
     try {
         const { body } = req;
@@ -155,31 +172,160 @@ router.post('/category', async (req, res, next) => {
         next(error);
     }
 })
+//xu ly cap nhat sp
+// const product = await productModel.findByIdAndUpdate(id,
+//     { title: title, description: description, pdf: pdf, image: image, audio: audio, categoryId: category, authorId: author, publicAt: publicAt })
+router.post('/:id/edit', [uploadFile.single('image'),], async (req, res, next) => {
+    const updateAt = moment().add(7, 'hours').format('DD-MM-YYYY');
+    try {
+        const { id } = req.params;
+        const { body } = req;
+        const { title, image, description, publicAt, category, author, pdf, audio, mucluc, free, max } = body;
+        if (!title || !image || !description || !publicAt || !category || !author || !pdf || !audio || !mucluc || !max || !free) {
+            return res.status(200).json({ result: false, message: 'update ko thanh cong,thieu thong tin' });
+        }
+        let freeNe = Boolean(true);
+        if (free == "free") {
+        } else {
+            freeNe = Boolean(false);
+        }
+        // Mảng mới để lưu audio
+        var audios = audio.split(',');
+        console.log(audios[0]);
+        console.log(audios[1]);
+        console.log(audios[2]);
+        console.log(audios[3]);
+
+        // Mảng mới để lưu mucluc
+        var mls = mucluc.split(',');
+        console.log(mls[0]);
+        console.log(mls[1]);
+        console.log(mls[2]);
+        console.log("position 1: ", mls[3]);
+        console.log("position 2: ", mls[4]);
+        console.log("position 3: ", mls[5]);
+
+        const product = await productModel.findByIdAndUpdate(id,
+            {
+                title: title, description: description
+                , pdf: pdf, image: image
+                , categoryId: category, authorId: author
+                , publicAt: publicAt, free: free, max: parseInt(max)
+            })
+        if (product) {
+            //update sach thanh cong
+            const audioUpdate = await AudioModel.findOneAndUpdate({ bookId: id }, { audio0: audios[0], audio1: audios[1], audio2: audios[2], audio3: audios[3] });
+            //const audioUpdates = await AudioModel.find({ bookId: id })
+            if (audioUpdate.length < 1) {
+                // update that bai
+            } else {
+                //update audio thanh cong, tiep tuc update mucluc
+                const mlUpdate1 = await MucLucModel.findOneAndUpdate({ bookId: id, chuong: 1 }, { title: mls[0], position: mls[3] });
+                const mlUpdate2 = await MucLucModel.findOneAndUpdate({ bookId: id, chuong: 2 }, { title: mls[1], position: mls[4] });
+                const mlUpdate3 = await MucLucModel.findOneAndUpdate({ bookId: id, chuong: 3 }, { title: mls[2], position: mls[5] });
+
+                if (mlUpdate1.length < 1 || mlUpdate2.length < 1 || mlUpdate3.length < 1) {
+                    //update that bai
+                } else {
+                    return res.redirect('/cpanel/product?alert=update%20thanh%20cong');
+
+                }
+
+            }
+        }else{
+            return res.redirect('/error?error=ko update dc product');
+        }
+
+
+    } catch (error) {
+        console.log('Add new product error: ', error)
+        next(error);
+    }
+});
+//xu ly add
 router.post('/new', async (req, res, next) => {
 
     const createAt = moment().add(7, 'hours').format('DD-MM-YYYY');
     const updateAt = moment().add(7, 'hours').format('DD-MM-YYYY');
     try {
         const { body } = req;
+        const { title, image, description, publicAt, category, author, pdf, audio, mucluc, free, max } = body;
+        if (!title || !image || !description || !publicAt || !category || !author || !pdf || !audio || !mucluc || !max || !free) {
+            return res.status(200).json({ result: false, message: 'update ko thanh cong,thieu thong tin' });
+        }
+        let freeNe = Boolean(true);
+        if (free == "free") {
+        } else {
+            freeNe = Boolean(false);
+        }
+        // Mảng mới để lưu audio
+        var audios = audio.split(',');
+        console.log(audios[0]);
+        console.log(audios[1]);
+        console.log(audios[2]);
+        console.log(audios[3]);
 
-        const { title, image, description, publicAt, category, author, pdf, audio } = body;
-        console.log("body ne: ", body);
-
+        // Mảng mới để lưu mucluc
+        var mls = mucluc.split(',');
+        console.log(mls[0]);
+        console.log(mls[1]);
+        console.log(mls[2]);
+        console.log("position 1: ", mls[3]);
+        console.log("position 2: ", mls[4]);
+        console.log("position 3: ", mls[5]);
+        //return res.status(200).json({ result: true, message: 'update  thanh cong' });
+        //thieu ,disable,free,max 
         const last_search = new Date();
         const rate = 0;
         const search = 1;
         const bodyNew = {
-            title: title, authorId: author, categoryId: category, description: description,
-            image: image, createAt: createAt, updateAt: updateAt, pdf: pdf, audio: audio, last_search: last_search, rate: rate, search: search, publicAt: publicAt
+            title: title, authorId: author, categoryId: category, description: description, disable: false, free: free, max: max,
+            image: image, createAt: createAt, updateAt: updateAt, pdf: pdf, last_search: last_search, rate: rate, search: search, publicAt: publicAt
         }
-        console.log("body ne: ", bodyNew);
-
-        const newProduct = await productModel.create(bodyNew);
-        if (newProduct) {
-            return res.redirect('/cpanel/product');
+        //neu ch co sach thi moi them sach
+        const getBook = await productModel.find({ title: title });
+        if (getBook.length < 1) {
+            const newProduct = await productModel.create(bodyNew);
+            //neu them thanh cong thi them mucluc
+            if (newProduct) {
+                const newML1 = { bookId: newProduct._id, title: mls[0], position: mls[3], chuong: 1 }
+                const newML2 = { bookId: newProduct._id, title: mls[1], position: mls[4], chuong: 2 }
+                const newML3 = { bookId: newProduct._id, title: mls[2], position: mls[5], chuong: 3 }
+                const ml1 = await MucLucModel.create(newML1)
+                const ml2 = await MucLucModel.create(newML2)
+                const ml3 = await MucLucModel.create(newML3)
+                // neu them mucluc thanh cong thi them audio
+                if (ml1 && ml2 && ml3) {
+                    const newAu = { bookId: newProduct._id, audio0: audios[0], audio1: audios[1], audio2: audios[2], audio3: audios[3] };
+                    const newAudio = await AudioModel.create(newAu)
+                    if (newAudio) {
+                        return res.redirect('/cpanel/product');
+                    }
+                    else {
+                        const deleteMl = await MucLucModel.findOneAndDelete({ bookId: newProduct._id });
+                        console.log(deleteMl);
+                        return res.redirect('/error?error=ko them dc product');
+                    }
+                } else {
+                    const deleteNe = await productModel.findByIdAndRemove(newProduct._id);
+                    console.log(deleteNe);
+                    return res.redirect('/error?error=ko them dc product');
+                }
+            } else {
+                return res.redirect('/error?error=ko them dc product');
+            }
         } else {
-            return res.redirect('/error?error=ko them dc product');
+            return res.redirect('/error?error=sach nay da co roi');
         }
+
+        // console.log("body ne: ", bodyNew);
+
+        // const newProduct = await productModel.create(bodyNew);
+        // if (newProduct) {
+        //     return res.redirect('/cpanel/product');
+        // } else {
+        //     return res.redirect('/error?error=ko them dc product');
+        // }
 
     } catch (error) {
         console.log('Add new product error: ', error)
@@ -193,10 +339,13 @@ router.get('/:id/edit', async (req, res, next) => {
         //const product = await productController.getProductById(id);
         const product = await productModel.findById(id);
         const categories = await CategoryModel.find({})
+        const audios = await AudioModel.find({ bookId: id })
+        const audioArray = audios[0].audio0 + "," + audios[0].audio1 + "," + audios[0].audio2 + "," + audios[0].audio3;
         const authors = await AuthorModel.find({});
-        console.log(authors);
-        console.log(product);
-        console.log(categories);
+        const mls = await MucLucModel.find({ bookId: id })
+        const muclucs = mls[0].title + "," + mls[1].title + "," + mls[2].title + "," + mls[0].position + "," + mls[1].position + "," + mls[2].position;
+        console.log("max ne: ", product.max);
+        //console.log("audio ne: ",audioArray);
         for (let index = 0; index < categories.length; index++) {
             const element = categories[index];
             //console.log("element ne: ", element);
@@ -213,7 +362,7 @@ router.get('/:id/edit', async (req, res, next) => {
                 authors[index].selected = true;
             }
         }
-        res.render('product/edit', { product, categories, authors });
+        res.render('product/edit', { product, categories, authors, audioArray, muclucs });
     } catch (error) {
         next(error);
     }
