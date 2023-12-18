@@ -11,6 +11,8 @@ const path = require('path');
 const MucLucModel = require('../../components/products/MucLucModel');
 const AudioModel = require('../../components/products/AudioModel');
 const LibraryModel = require('../../components/products/LibraryModel');
+const UserModel = require('../../components/users/UserModel');
+const PaymentModel = require('../../components/products/PaymentModel');
 const upload = multer(); // Khởi tạo multer
 const app = express();
 app.use(express.json());
@@ -240,6 +242,24 @@ router.post('/:id/edit', [uploadFile.single('image'),], async (req, res, next) =
     } catch (error) {
         console.log('Add new product error: ', error)
         next(error);
+    }
+});
+router.get('/doanhthu/get', async (req, res) => {
+    try {
+        // Kiểm tra xem email đã tồn tại trong MongoDB chưa
+        let doanhthu = await PaymentModel.find({})
+        if (doanhthu) {
+            let doanhthuNe=0;
+            for(let i=0;i<doanhthu.length;i++){
+                doanhthuNe+=parseInt(doanhthu[i].money);
+            }
+            res.status(200).json({ result: true, doanhthu: doanhthuNe+".000 VND" });
+        }
+        else{
+            res.status(200).json({ result: false,message:"khong co user"});
+        }
+    } catch (error) {
+        res.status(201).json({ result: false, message: 'Internal Server Error' + error });
     }
 });
 //xu ly add

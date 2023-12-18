@@ -9,6 +9,7 @@ const app = express();
 const { authenApp } = require('../../middle/Authen');
 const AdminModel = require('../../components/users/AdminModel');
 const { log } = require('debug/src/browser');
+const PaymentModel = require('../../components/products/PaymentModel');
 //api login
 // r
 // Kiểm tra email và trả về user hoặc tạo mới user
@@ -30,25 +31,65 @@ router.get('/payment/:id', async (req, res) => {
     try {
         const { id } = req.params;
         // Kiểm tra xem email đã tồn tại trong MongoDB chưa
-        let user = await userModel.findByIdAndUpdate(id,{premium:true});
+        let user = await userModel.findByIdAndUpdate(id, { premium: true });
         if (user) {
             res.status(200).json({ result: true, user: user });
         }
-        else{
-            res.status(200).json({ result: false,message:"khong co user"});
+        else {
+            res.status(200).json({ result: false, message: "khong co user" });
         }
     } catch (error) {
         res.status(201).json({ result: false, message: 'Internal Server Error' + error });
     }
 });
+const moment = require('moment');
+
+router.post('/doanhthu/new', async (req, res) => {
+    try {
+        const { userId, money } = req.body;
+        const time = moment().add(7, 'hours').format('hh:mm A');
+        const date = moment().add(7, 'hours').format('DD/MM/YYYY');
+        const body = { userId: userId, date: date, time: time, money: money }
+        if (!userId || !money) {
+            res.status(200).json({ result: false, message: "thieu thong tin" });
+
+        } else {
+            const get = await PaymentModel.find({ userId: userId })
+            console.log(get);
+            if (get.length>0) {
+                const newP = await PaymentModel.findOneAndUpdate({userId:userId},{money:money})
+                // Kiểm tra xem email đã tồn tại trong MongoDB chưa
+                if (newP) {
+                    res.status(200).json({ result: true, newP: newP, message: "update" });
+                }
+                else {
+                    res.status(200).json({ result: false, message: "khong co user" });
+                }
+            } else {
+                const newP = await PaymentModel.create(body);
+                // Kiểm tra xem email đã tồn tại trong MongoDB chưa
+                if (newP) {
+                    res.status(200).json({ result: true, newP: newP ,message: "new" });
+                }
+                else {
+                    res.status(200).json({ result: false, message: "khong co user" });
+                }
+            }
+        }
+
+    } catch (error) {
+        res.status(201).json({ result: false, message: 'Internal Server Error' + error });
+    }
+});
+
 router.post('/banUser', async (req, res, next) => {
     try {
         const { id, ban } = req.body;
         if (!id) {
             return res.status(402).json({ result: false });
         }
-        if (ban==null) {
-            return res.status(403).json({ result: false,message:"Chua co ban" });
+        if (ban == null) {
+            return res.status(403).json({ result: false, message: "Chua co ban" });
         }
         else {
             const getUser = await userModel.find({});
@@ -70,12 +111,12 @@ router.get('/delete-premium/:id', async (req, res) => {
     try {
         const { id } = req.params;
         // Kiểm tra xem email đã tồn tại trong MongoDB chưa
-        let user = await userModel.findByIdAndUpdate(id,{premium:false});
+        let user = await userModel.findByIdAndUpdate(id, { premium: false });
         if (user) {
             res.status(200).json({ result: true, user: user });
         }
-        else{
-            res.status(200).json({ result: false,message:"khong co user"});
+        else {
+            res.status(200).json({ result: false, message: "khong co user" });
         }
     } catch (error) {
         res.status(201).json({ result: false, message: 'Internal Server Error' + error });
@@ -84,13 +125,13 @@ router.get('/delete-premium/:id', async (req, res) => {
 router.post('/login', async (req, res, next) => {
     try {
         const { email } = req.body;
-        const user = await userModel.findOne({email})
+        const user = await userModel.findOne({ email })
         console.log(email);
         console.log(user);
         if (user) {
             // tao token
             const token = jwt.sign({ user }, 'secret', { expiresIn: '1h' });
-            return res.status(200).json({ result: true, user: user, token: token ,status: true, message: 'Login successful',});
+            return res.status(200).json({ result: true, user: user, token: token, status: true, message: 'Login successful', });
         }
         else {
             return res.status(200).json({ result: false, message: "Email doesn't exist" });
@@ -116,7 +157,7 @@ router.post('/login/cpanel', async (req, res, next) => {
 
             if (password == user.password) {
                 const token = jwt.sign({ user }, 'secret', { expiresIn: '1h' });
-                 res.status(200).json({ result: true, user: user, token: token });
+                res.status(200).json({ result: true, user: user, token: token });
             } else {
                 res.status(201).json({ status: true, message: 'Login failer' });
             }
@@ -153,7 +194,7 @@ router.post('/update-user', async (req, res, next) => {
 router.get('/logout', async (req, res, next) => {
     try {
         req.session.destroy;
-        let data = {   
+        let data = {
             logout: true,
             responeTimestamp: new Date(),
             statusCode: 200,
