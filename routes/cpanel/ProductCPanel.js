@@ -13,6 +13,7 @@ const AudioModel = require('../../components/products/AudioModel');
 const LibraryModel = require('../../components/products/LibraryModel');
 const UserModel = require('../../components/users/UserModel');
 const PaymentModel = require('../../components/products/PaymentModel');
+const ProductModel = require('../../components/products/ProductModel');
 const upload = multer(); // Khởi tạo multer
 const app = express();
 app.use(express.json());
@@ -254,6 +255,26 @@ router.get('/doanhthu/get', async (req, res) => {
                 doanhthuNe+=parseInt(doanhthu[i].money);
             }
             res.status(200).json({ result: true, doanhthu: doanhthuNe+".000 VND" });
+        }
+        else{
+            res.status(200).json({ result: false,message:"khong co user"});
+        }
+    } catch (error) {
+        res.status(201).json({ result: false, message: 'Internal Server Error' + error });
+    }
+});
+router.get('/get-sum/book', async (req, res) => {
+    try {
+        // Kiểm tra xem email đã tồn tại trong MongoDB chưa
+        let doanhthu = await ProductModel.find({})
+        if (doanhthu) {
+            let sumDisable=0;
+            for(let i=0;i<doanhthu.length;i++){
+                if(doanhthu[i].disable){
+                    sumDisable+=1;
+                }
+            }
+            res.status(200).json({ result: true, product: doanhthu.length,productDisable:sumDisable });
         }
         else{
             res.status(200).json({ result: false,message:"khong co user"});

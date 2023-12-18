@@ -42,6 +42,20 @@ router.get('/payment/:id', async (req, res) => {
         res.status(201).json({ result: false, message: 'Internal Server Error' + error });
     }
 });
+router.get('/get-all/user', async (req, res) => {
+    try {
+        // Kiểm tra xem email đã tồn tại trong MongoDB chưa
+        let users = await userModel.find({})
+        if (users) {
+            res.status(200).json({ result: true, users: users.length });
+        }
+        else {
+            res.status(200).json({ result: false, message: "khong co user" });
+        }
+    } catch (error) {
+        res.status(201).json({ result: false, message: 'Internal Server Error' + error });
+    }
+});
 const moment = require('moment');
 
 router.post('/doanhthu/new', async (req, res) => {
