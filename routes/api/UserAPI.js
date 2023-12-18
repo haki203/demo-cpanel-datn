@@ -71,7 +71,7 @@ router.post('/doanhthu/new', async (req, res) => {
             const get = await PaymentModel.find({ userId: userId })
             console.log(get);
             if (get.length>0) {
-                const newP = await PaymentModel.findOneAndUpdate({userId:userId},{money:money})
+                const newP = await PaymentModel.findOneAndUpdate({userId:userId},{money:get[0].money+money})
                 // Kiểm tra xem email đã tồn tại trong MongoDB chưa
                 if (newP) {
                     res.status(200).json({ result: true, newP: newP, message: "update" });

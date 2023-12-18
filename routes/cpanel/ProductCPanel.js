@@ -245,6 +245,24 @@ router.post('/:id/edit', [uploadFile.single('image'),], async (req, res, next) =
         next(error);
     }
 });
+function formatNumber(number) {
+    // Chuyển đổi số thành chuỗi
+    let numberString = number.toString();
+    // Tính độ dài của số
+    let length = numberString.length;
+    // Tạo một biến lưu trữ kết quả
+    let result = '';
+    // Duyệt qua từng ký tự của chuỗi số (từ phải sang trái)
+    for (let i = length - 1; i >= 0; i--) {
+        // Thêm ký tự vào kết quả
+        result = numberString[i] + result;
+        // Nếu đã duyệt qua 3 ký tự và không phải là ký tự cuối cùng, thêm dấu chấm
+        if ((length - i) % 3 === 0 && i !== 0) {
+            result = '.' + result;
+        }
+    }
+    return result;
+}
 router.get('/doanhthu/get', async (req, res) => {
     try {
         // Kiểm tra xem email đã tồn tại trong MongoDB chưa
@@ -254,7 +272,9 @@ router.get('/doanhthu/get', async (req, res) => {
             for(let i=0;i<doanhthu.length;i++){
                 doanhthuNe+=parseInt(doanhthu[i].money);
             }
-            res.status(200).json({ result: true, doanhthu: doanhthuNe+".000 VND" });
+            console.log(doanhthuNe);
+            console.log(formatNumber(doanhthuNe));
+            res.status(200).json({ result: true, doanhthu: formatNumber(doanhthuNe)+".000 VND" });
         }
         else{
             res.status(200).json({ result: false,message:"khong co user"});
