@@ -235,7 +235,7 @@ router.post('/:id/edit', [uploadFile.single('image'),], async (req, res, next) =
                 }
 
             }
-        }else{
+        } else {
             return res.redirect('/error?error=ko update dc product');
         }
 
@@ -268,17 +268,68 @@ router.get('/doanhthu/get', async (req, res) => {
         // Kiểm tra xem email đã tồn tại trong MongoDB chưa
         let doanhthu = await PaymentModel.find({})
         if (doanhthu) {
-            let doanhthuNe=0;
-            for(let i=0;i<doanhthu.length;i++){
-                doanhthuNe+=parseInt(doanhthu[i].money);
+            let doanhthuNe = 0;
+            for (let i = 0; i < doanhthu.length; i++) {
+                doanhthuNe += parseInt(doanhthu[i].money);
             }
             console.log(doanhthuNe);
             console.log(formatNumber(doanhthuNe));
-            res.status(200).json({ result: true, doanhthu: formatNumber(doanhthuNe)+".000 VND" });
+            res.status(200).json({ result: true, doanhthu: formatNumber(doanhthuNe) });
         }
-        else{
-            res.status(200).json({ result: false,message:"khong co user"});
+        else {
+            res.status(200).json({ result: false, message: "khong co user" });
         }
+
+    } catch (error) {
+        res.status(201).json({ result: false, message: 'Internal Server Error' + error });
+    }
+});
+const mongoose = require('mongoose');
+
+router.get('/doanhthu/get-all', async (req, res) => {
+
+    try {
+        // Kiểm tra xem email đã tồn tại trong MongoDB chưa
+        let doanhthu = await PaymentModel.find({})
+        let history=[];
+
+        if (doanhthu) {
+            for (let i = 0; i < doanhthu.length; i++) {
+                // Kết hợp thời gian và ngày thành chuỗi đầy đủ
+                const historyDateTimeString = `${doanhthu[i].date} ${doanhthu[i].time}`;
+                // Chuyển đổi thành đối tượng moment
+                const historyMoment = moment(historyDateTimeString, "DD/MM/YYYY hh:mm A");
+                // Thời gian hiện tại
+                const currentMoment = moment().add(7, 'hours');
+                // Tính khoảng cách thời gian giữa history và thời gian hiện tại
+                const minutesDifference = currentMoment.diff(historyMoment, 'minutes');
+                // Tính khoảng cách thời gian giữa history và thời gian hiện tại
+                const duration = moment.duration(currentMoment.diff(historyMoment));
+                // Lấy số lượng giờ, ngày, tuần và tháng
+                const hoursDifference = duration.asHours();
+                const daysDifference = duration.asDays();
+                let idUser = doanhthu[i].userId.toString();
+                const userNe = await UserModel.findById(idUser)
+                let bodyNe={};
+                if (minutesDifference < 61) {
+                     bodyNe = { message: userNe.full_name + " đã thanh toán hội viên giá " + doanhthu[i].money + ".000 VND", date: minutesDifference+" phút trước!" }
+                }else if(hoursDifference<25){
+                     bodyNe = { message: userNe.full_name + " đã thanh toán hội viên giá " + doanhthu[i].money + ".000 VND", date: hoursDifference+" giờ trước!" }
+                }else{
+                     bodyNe = { message: userNe.full_name + " đã thanh toán hội viên giá " + doanhthu[i].money + ".000 VND", date: daysDifference+" ngày trước!" }
+                }
+                history.push(bodyNe)
+            }
+
+
+            res.status(200).json({
+                result: true, history: history
+            });
+        }
+        else {
+            res.status(200).json({ result: false, message: "khong co user" });
+        }
+
     } catch (error) {
         res.status(201).json({ result: false, message: 'Internal Server Error' + error });
     }
@@ -288,16 +339,16 @@ router.get('/get-sum/book', async (req, res) => {
         // Kiểm tra xem email đã tồn tại trong MongoDB chưa
         let doanhthu = await ProductModel.find({})
         if (doanhthu) {
-            let sumDisable=0;
-            for(let i=0;i<doanhthu.length;i++){
-                if(doanhthu[i].disable){
-                    sumDisable+=1;
+            let sumDisable = 0;
+            for (let i = 0; i < doanhthu.length; i++) {
+                if (doanhthu[i].disable) {
+                    sumDisable += 1;
                 }
             }
-            res.status(200).json({ result: true, product: doanhthu.length,productDisable:sumDisable });
+            res.status(200).json({ result: true, product: doanhthu.length, productDisable: sumDisable });
         }
-        else{
-            res.status(200).json({ result: false,message:"khong co user"});
+        else {
+            res.status(200).json({ result: false, message: "khong co user" });
         }
     } catch (error) {
         res.status(201).json({ result: false, message: 'Internal Server Error' + error });
