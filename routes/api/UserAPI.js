@@ -136,6 +136,21 @@ router.get('/delete-premium/:id', async (req, res) => {
         res.status(201).json({ result: false, message: 'Internal Server Error' + error });
     }
 });
+function generateRandomId() {
+    // Tạo mảng chứa tất cả các ký tự chữ cái
+    const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+    
+    // Chọn ngẫu nhiên một ký tự từ mảng chữ cái
+    const randomChar = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+    
+    // Tạo một số ngẫu nhiên từ 1000 đến 9999
+    const randomNum = Math.floor(1000 + Math.random() * 9000);
+    
+    // Kết hợp ký tự và số để tạo ID
+    const generatedId = randomChar + randomNum;
+    
+    return generatedId;
+  }
 router.post('/login', async (req, res, next) => {
     try {
         const { email } = req.body;
@@ -148,7 +163,16 @@ router.post('/login', async (req, res, next) => {
             return res.status(200).json({ result: true, user: user, token: token, status: true, message: 'Login successful', });
         }
         else {
-            return res.status(200).json({ result: false, message: "Email doesn't exist" });
+            const id="user-"+generateRandomId();
+            const avt='https://storage.googleapis.com/support-kms-prod/ZAl1gIwyUsvfwxoW9ns47iJFioHXODBbIkrK';
+            const role=1;
+            const phone="Chưa có";
+            const bodyNew={full_name:id,email:email,avatar:avt,role:1,phone:phone,ban:false,premium:false};
+            console.log(id);
+            const userNew = await userModel.create(bodyNew);
+            const token = jwt.sign({ user }, 'secret', { expiresIn: '1h' });
+
+            return res.status(200).json({ result: true, message: "Create new user succesfully",user:userNew,token:token,status:true });
         }
     } catch (error) {
         console.log(error);
