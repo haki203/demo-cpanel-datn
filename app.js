@@ -1,6 +1,7 @@
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
+const { PeerServer } = require('peer');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const session = require('express-session');
@@ -23,7 +24,8 @@ const firebaseConfig = {
   messagingSenderId: "739672106128",
   appId: "1:739672106128:web:5186d4b6889378d25aa415"
 };
-
+const peerServer = PeerServer({ port: 9000, path: '/myapp', host: '0.0.0.0' });
+console.log('peer server listening on port 9000')
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
