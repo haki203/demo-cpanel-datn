@@ -24,10 +24,25 @@ const firebaseConfig = {
   messagingSenderId: "739672106128",
   appId: "1:739672106128:web:5186d4b6889378d25aa415"
 };
-const peerServer = PeerServer({ port: 9000, path: '/myapp', host: '0.0.0.0' });
+const peerServer = PeerServer({
+  port: process.env.PORT || 9000,
+  path: '/myapp',
+  host: '0.0.0.0',
+  secure: true
+});
+
+peerServer.on('connection', (client) => {
+  console.log(`Client connected: ${client.id}`);
+});
+
+peerServer.on('disconnect', (client) => {
+  console.log(`Client disconnected: ${client.id}`);
+});
+
 setTimeout(() => {
-  console.log('peer server listening on port 9000', peerServer)
+  console.log('PeerJS server is running on Port ', process.env.PORT || 9000, ' and ', peerServer);
 }, 1000)
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
